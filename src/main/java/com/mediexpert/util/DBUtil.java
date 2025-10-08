@@ -25,7 +25,7 @@ public class DBUtil {
 
         Map<String, String> propertys = new HashMap<>();
         propertys.put("jakarta.persistence.jdbc.password", dbpassword);
-        emf = Persistence.createEntityManagerFactory("MediExpert", propertys);
+        emf = Persistence.createEntityManagerFactory("MediExpertPU", propertys);
     }
 
     public static EntityManager getEntityManager() {

@@ -2,6 +2,8 @@ package com.mediexpert.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,6 +16,9 @@ public class Role {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private List<User> users = new ArrayList<>();
 
     public Role() {}
     public Role(String name) {
@@ -35,4 +40,5 @@ public class Role {
     public void setName(String name) {
         this.name = name;
     }
+
 }
