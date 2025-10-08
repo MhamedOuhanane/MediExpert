@@ -25,14 +25,14 @@ public class DBUtil {
 
         Map<String, String> propertys = new HashMap<>();
         propertys.put("jakarta.persistence.jdbc.password", dbpassword);
-        emf = Persistence.createEntityManagerFactory("MediExpertPU", propertys);
+        emf = Persistence.createEntityManagerFactory("mediexpertPU", propertys);
     }
 
     public static EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public static void close() {
+    public static void closeFactory() {
         if (emf != null && emf.isOpen()) {
             emf.close();
         }

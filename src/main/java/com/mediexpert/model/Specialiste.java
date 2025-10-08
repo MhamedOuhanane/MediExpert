@@ -22,7 +22,7 @@ public class Specialiste extends User {
     @OneToMany(mappedBy = "specialiste", cascade = CascadeType.ALL)
     private List<Demande> demandes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "calendrier", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "specialiste", cascade = CascadeType.ALL)
     private List<Calendrier> calendriers = new ArrayList<>();
 
     public Specialiste() {}

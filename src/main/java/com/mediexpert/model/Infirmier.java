@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "infermiers")
+@Table(name = "infirmiers")
 public class Infirmier extends User {
 
     public Infirmier() {}

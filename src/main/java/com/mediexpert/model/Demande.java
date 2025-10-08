@@ -37,12 +37,16 @@ public class Demande {
     @JoinColumn(name = "consultation_id")
     private Consultation consultation;
 
+    @ManyToOne
+    @JoinColumn(name = "secialiste_id")
+    private Specialiste specialiste;
+
     @OneToMany(mappedBy = "demande", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
     public Demande(){}
 
-    public Demande(UUID id, String question, String response, DemandeStatut statut, LocalDateTime startDate, LocalDateTime createdAt, LocalDateTime updatedAt, Consultation consultation, List<Notification> notifications) {
+    public Demande(UUID id, String question, String response, DemandeStatut statut, LocalDateTime startDate, LocalDateTime createdAt, LocalDateTime updatedAt, Consultation consultation, Specialiste specialiste, List<Notification> notifications) {
         this.id = id;
         this.question = question;
         this.response = response;
@@ -51,7 +55,12 @@ public class Demande {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.consultation = consultation;
+        this.specialiste = specialiste;
         this.notifications = notifications;
+    }
+
+    public Demande(UUID id) {
+        this.id = id;
     }
 
     public UUID getId() {
@@ -123,6 +132,14 @@ public class Demande {
 
     public List<Notification> getNotifications() {
         return notifications;
+    }
+
+    public Specialiste getSpecialiste() {
+        return specialiste;
+    }
+
+    public void setSpecialiste(Specialiste specialiste) {
+        this.specialiste = specialiste;
     }
 
     public void setNotifications(List<Notification> notifications) {

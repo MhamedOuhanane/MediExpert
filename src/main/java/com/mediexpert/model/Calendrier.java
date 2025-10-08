@@ -37,7 +37,7 @@ public class Calendrier {
     private Boolean disponibilite;
 
     @ManyToOne
-    @JoinColumn(name = "specialist_id")
+    @JoinColumn(name = "specialiste_id")
     private Specialiste specialiste;
 
     @OneToMany(mappedBy = "calendrier", cascade = CascadeType.ALL)
