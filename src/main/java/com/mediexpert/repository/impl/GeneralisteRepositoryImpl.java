@@ -24,7 +24,7 @@ public class GeneralisteRepositoryImpl implements GeneralisteRepository {
                 return generaliste;
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new RuntimeException("Erreur lord de l'insertion du generaliste: " + e.getMessage(), e);
+                throw new RuntimeException("Erreur lors de l'insertion du generaliste: " + e.getMessage(), e);
             }
         }
     }
@@ -34,7 +34,7 @@ public class GeneralisteRepositoryImpl implements GeneralisteRepository {
         try (EntityManager em = DBUtil.getEntityManager()) {
             return Optional.ofNullable(em.find(Generaliste.class, generalisteId));
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lord de la recherche du generaliste d'id '" + generalisteId + "': " + e.getMessage(), e);
+            throw new RuntimeException("Erreur lors de la recherche du generaliste d'id '" + generalisteId + "': " + e.getMessage(), e);
         }
     }
 
@@ -43,7 +43,7 @@ public class GeneralisteRepositoryImpl implements GeneralisteRepository {
         try (EntityManager em = DBUtil.getEntityManager()) {
             return em.createQuery("SELECT g From Generaliste g", Generaliste.class).getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lord de la selection des generalistes " + e.getMessage(), e);
+            throw new RuntimeException("Erreur lors de la selection des generalistes " + e.getMessage(), e);
         }
     }
 
@@ -58,7 +58,7 @@ public class GeneralisteRepositoryImpl implements GeneralisteRepository {
                 return updated;
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new RuntimeException("Erreur lord de la modification du generaliste:" + e.getMessage(), e);
+                throw new RuntimeException("Erreur lors de la modification du generaliste:" + e.getMessage(), e);
             }
         }
     }
@@ -75,7 +75,7 @@ public class GeneralisteRepositoryImpl implements GeneralisteRepository {
                 return true;
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new RuntimeException("Erreur lord de la suppression du generaliste: " + e.getMessage(), e);
+                throw new RuntimeException("Erreur lors de la suppression du generaliste: " + e.getMessage(), e);
             }
         }
     }

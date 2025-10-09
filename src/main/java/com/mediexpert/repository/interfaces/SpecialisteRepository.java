@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface SpecialisteRepository {
     Specialiste insertSpecialiste(Specialiste specialiste);
-    Optional<Specialiste> findSpecialiste(UUID specialiste_id);
+    Optional<Specialiste> findSpecialiste(UUID specialisteId);
     List<Specialiste> selectSpecialiste();
     Specialiste updateSpecialiste(Specialiste specialiste);
     Boolean deleteSpecialiste(Specialiste specialiste);

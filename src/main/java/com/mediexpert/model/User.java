@@ -100,9 +100,7 @@ public abstract class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public void setPassword(String password) { BCrypt.hashpw(password, BCrypt.gensalt()); }
 
     public String getCarte() {
         return carte;
@@ -153,5 +151,9 @@ public abstract class User {
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public boolean validPassword(String password) {
+        return BCrypt.checkpw(password, this.password);
     }
 }
