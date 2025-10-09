@@ -1,13 +1,13 @@
 package com.mediexpert.listener;
 
-import com.mediexpert.model.Role;
+import com.mediexpert.repository.impl.*;
+import com.mediexpert.repository.interfaces.*;
+import com.mediexpert.service.impl.*;
+import com.mediexpert.service.interfaces.*;
 import com.mediexpert.util.DBUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebListener;
 
 //@WebListener
 public class JpaStartupListener implements ServletContextListener {
@@ -15,7 +15,7 @@ public class JpaStartupListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
 //        EntityManager em =  DBUtil.getEntityManager();
-
+//        em.close();
 //        try {
 //            em.getTransaction().begin();
 //
@@ -33,11 +33,37 @@ public class JpaStartupListener implements ServletContextListener {
 //            em.close();
 //        }
 
+        RoleRepository roleRepository = new RoleRepositoryImpl();
+        UserRepository userRepository = new UserRepositoryImpl();
+        AdminRepository adminRepository = new AdminRepositoryImpl();
+        SpecialisteRepository specialisteRepository = new SpecialisteRepositoryImpl();
+        InfirmierRepository infirmierRepository = new InfirmierRepositoryImpl();
+        GeneralisteRepository generalisteRepository = new GeneralisteRepositoryImpl();
+        RecordRepository recordRepository = new RecordRepositoryImpl();
+        ConsultationRepository consultationRepository = new ConsultationRepositoryImpl();
+
+        RoleService roleService = new RoleServiceImpl(roleRepository);
+        UserService userService = new UserServiceImpl(userRepository, specialisteRepository);
+        AdminService adminService = new AdminServiceImpl(adminRepository);
+        SpecialisteService specialisteService = new SpecialisteServiceImpl(specialisteRepository);
+        GeneralisteService generalisteService = new GeneralisteServiceImpl(generalisteRepository);
+        InfirmierService infirmierService = new InfirmierServiceImpl(infirmierRepository);
+        RecordService recordService = new RecordServiceImpl(recordRepository);
+        ConsultationService consultationService = new ConsultationServiceImpl(consultationRepository);
+
+        sce.getServletContext().setAttribute("userService", userService);
+        sce.getServletContext().setAttribute("adminService", adminService);
+        sce.getServletContext().setAttribute("specialisteService", specialisteService);
+        sce.getServletContext().setAttribute("generalisteService", generalisteService);
+        sce.getServletContext().setAttribute("infirmierService", infirmierService);
+        sce.getServletContext().setAttribute("recordService", recordService);
+        sce.getServletContext().setAttribute("consultationService", consultationService);
+        sce.getServletContext().setAttribute("roleService", roleService);
+
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         DBUtil.closeFactory();
-        System.out.println("EntityManagerFactory closed.");
     }
 }
