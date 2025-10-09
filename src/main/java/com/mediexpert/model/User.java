@@ -100,7 +100,9 @@ public abstract class User {
         return password;
     }
 
-    public void setPassword(String password) { BCrypt.hashpw(password, BCrypt.gensalt()); }
+    public void setPassword(String password) {
+        this.password = BCrypt.hashpw(password, BCrypt.gensalt());
+    }
 
     public String getCarte() {
         return carte;
