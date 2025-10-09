@@ -1,0 +1,27 @@
+package com.mediexpert.util;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
+import java.util.UUID;
+
+public class CSRFUtil {
+    private static final String CSRF_TOKEN = "csrfToken";
+
+    public static String generatedToken(HttpSession session) {
+        String token = UUID.randomUUID().toString();
+        session.setAttribute(CSRF_TOKEN, token);
+        return token;
+    }
+
+    public static String getCsrfToken(HttpSession session) {
+        Object token = session.getAttribute(CSRF_TOKEN);
+        return token != null ? token.toString() : null;
+    }
+
+    public static boolean validationToken(HttpServletRequest request) {
+        String sessionToken = getCsrfToken(request.getSession(false));
+        String formToken = request.getAttribute(CSRF_TOKEN).toString();
+        return sessionToken != null && sessionToken.equals(formToken);
+    }
+}
