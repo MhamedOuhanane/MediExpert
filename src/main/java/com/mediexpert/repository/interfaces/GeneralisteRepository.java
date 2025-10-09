@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface GeneralisteRepository {
     Generaliste insertGeneraliste(Generaliste generaliste);
-    Optional<Generaliste> findGeneraliste(UUID generaliste_id);
+    Optional<Generaliste> findGeneraliste(UUID generalisteId);
     List<Generaliste> selectGeneraliste();
     Generaliste updateGeneraliste(Generaliste generaliste);
     Boolean deleteGeneraliste(Generaliste generaliste);

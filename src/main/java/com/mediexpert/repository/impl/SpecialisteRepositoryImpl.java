@@ -14,18 +14,17 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
 
     @Override
     public Specialiste insertSpecialiste(Specialiste specialiste) {
-        EntityManager em = DBUtil.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            em.persist(specialiste);
-            tx.commit();
-            return specialiste;
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw new RuntimeException("Erreur lors de l'insertion du spécialiste: " + e.getMessage(), e);
-        } finally {
-            em.close();
+        try (EntityManager em = DBUtil.getEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                em.persist(specialiste);
+                tx.commit();
+                return specialiste;
+            } catch (Exception e) {
+                if (tx.isActive()) tx.rollback();
+                throw new RuntimeException("Erreur lors de l'insertion du spécialiste: " + e.getMessage(), e);
+            }
         }
     }
 
@@ -50,36 +49,34 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
 
     @Override
     public Specialiste updateSpecialiste(Specialiste specialiste) {
-        EntityManager em = DBUtil.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Specialiste updated = em.merge(specialiste);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw new RuntimeException("Erreur lors de la mise à jour du spécialiste: " + e.getMessage(), e);
-        } finally {
-            em.close();
+        try (EntityManager em = DBUtil.getEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                Specialiste updated = em.merge(specialiste);
+                tx.commit();
+                return updated;
+            } catch (Exception e) {
+                if (tx.isActive()) tx.rollback();
+                throw new RuntimeException("Erreur lors de la mise à jour du spécialiste: " + e.getMessage(), e);
+            }
         }
     }
 
     @Override
     public Boolean deleteSpecialiste(Specialiste specialiste) {
-        EntityManager em = DBUtil.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Specialiste attached = em.contains(specialiste) ? specialiste : em.merge(specialiste);
-            em.remove(attached);
-            tx.commit();
-            return true;
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            throw new RuntimeException("Erreur lors de la suppression du spécialiste: " + e.getMessage(), e);
-        } finally {
-            em.close();
+        try (EntityManager em = DBUtil.getEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                Specialiste attached = em.contains(specialiste) ? specialiste : em.merge(specialiste);
+                em.remove(attached);
+                tx.commit();
+                return true;
+            } catch (Exception e) {
+                if (tx.isActive()) tx.rollback();
+                throw new RuntimeException("Erreur lors de la suppression du spécialiste: " + e.getMessage(), e);
+            }
         }
     }
 }
