@@ -24,7 +24,7 @@ public class InfirmierRepositoryImpl implements InfirmierRepository {
                 return infirmier;
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new RuntimeException("Erreur lors de l'insertion du infirmier: " + e.getMessage(), e);
+                throw new RuntimeException("Erreur lors de l'insertion d'infirmier: " + e.getMessage(), e);
             }
 
         }
@@ -35,7 +35,7 @@ public class InfirmierRepositoryImpl implements InfirmierRepository {
         try (EntityManager em = DBUtil.getEntityManager()) {
             return Optional.ofNullable(em.find(Infirmier.class, infirmierId));
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la recherche du infirmier d'id '" + infirmierId + "': " + e.getMessage(), e);
+            throw new RuntimeException("Erreur lors de la recherche d'infirmier d'id '" + infirmierId + "': " + e.getMessage(), e);
         }
     }
 
@@ -59,7 +59,7 @@ public class InfirmierRepositoryImpl implements InfirmierRepository {
                 return updated;
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new RuntimeException("Erreur lors de la modification du infirmier:" + e.getMessage(), e);
+                throw new RuntimeException("Erreur lors de la modification d'infirmier:" + e.getMessage(), e);
             }
 
         }
@@ -77,7 +77,7 @@ public class InfirmierRepositoryImpl implements InfirmierRepository {
                 return true;
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new RuntimeException("Erreur lors de la suppression du infirmier: " + e.getMessage(), e);
+                throw new RuntimeException("Erreur lors de la suppression d'infirmier: " + e.getMessage(), e);
             }
 
         }
