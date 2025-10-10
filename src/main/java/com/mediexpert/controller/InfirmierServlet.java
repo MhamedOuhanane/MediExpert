@@ -24,6 +24,7 @@ public class InfirmierServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Infirmier infirmier = (Infirmier) SESSIONUtil.getUser(req);
         req.setAttribute("infirmier", infirmier);
+        req.setAttribute("currentRoute", "/infirmier");
         req.getRequestDispatcher( "pages/infirmier/profile.jsp").forward(req, resp);
     }
 }

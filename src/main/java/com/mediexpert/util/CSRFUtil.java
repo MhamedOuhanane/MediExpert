@@ -15,6 +15,7 @@ public class CSRFUtil {
     }
 
     public static String getCsrfToken(HttpSession session) {
+        if (session == null) return null;
         Object token = session.getAttribute(CSRF_TOKEN);
         return token != null ? token.toString() : null;
     }

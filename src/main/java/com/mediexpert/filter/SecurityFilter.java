@@ -28,6 +28,11 @@ public class SecurityFilter implements Filter {
                 filterChain.doFilter(request, response);
             }
             return;
+        } else {
+            if (SESSIONUtil.getUser(request) == null) {
+                response.sendRedirect(request.getContextPath() + "/connection");
+                return;
+            }
         }
 
         boolean canContinue = false;

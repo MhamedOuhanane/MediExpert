@@ -13,8 +13,13 @@
                 <div id="profile-section" class="content-section">
                     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
 
-                        <!-- En-tête du profil avec dégradé -->
-                        <div class="h-32 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                        <!-- En-tête du profil avec image de fond -->
+                        <div class="relative h-32 w-full overflow-hidden">
+                            <!-- Image en arrière-plan -->
+                            <img src="${pageContext.request.contextPath}/images/nurseBackg.jpg"
+                                 alt="Logo de fond"
+                                 class="w-full bg-contain" />
+                        </div>
 
                         <div class="px-8 pb-8">
                             <!-- Photo de profil -->

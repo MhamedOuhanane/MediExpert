@@ -1,5 +1,6 @@
 package com.mediexpert.model;
 
+import com.mediexpert.enums.StatusPatient;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -49,6 +50,10 @@ public class Record {
     @Column(nullable = false)
     private Double taille;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusPatient status;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -60,7 +65,7 @@ public class Record {
 
     public Record() {}
 
-    public Record(UUID id, String nom, String prenom, LocalDate dateNaissance, String carte, String telephone, String tension, Integer frequenceCardiaque, Double temperature, Integer frequenceRespiratoire, Double poids, Double taille, LocalDateTime createdAt, LocalDateTime updatedAt, List<Consultation> consultations) {
+    public Record(UUID id, String nom, String prenom, LocalDate dateNaissance, String carte, String telephone, String tension, Integer frequenceCardiaque, Double temperature, Integer frequenceRespiratoire, Double poids, Double taille, StatusPatient status, LocalDateTime createdAt, LocalDateTime updatedAt, List<Consultation> consultations) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -73,6 +78,7 @@ public class Record {
         this.frequenceRespiratoire = frequenceRespiratoire;
         this.poids = poids;
         this.taille = taille;
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.consultations = consultations;
@@ -195,6 +201,14 @@ public class Record {
 
     public List<Consultation> getConsultations() {
         return consultations;
+    }
+
+    public StatusPatient getStatusPatient() {
+        return status;
+    }
+
+    public void setStatusPatient(StatusPatient status) {
+        this.status = status;
     }
 
     public void setConsultations(List<Consultation> consultations) {

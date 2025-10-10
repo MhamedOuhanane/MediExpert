@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="fr">
-<%@ include file="../partials/_head.jsp" %>
+<%@ include file="partials/_head.jsp" %>
 <body class="bg-gradient-to-br from-blue-50 via-blue-100 to-purple-50 min-h-screen flex items-center justify-center p-4">
     <!-- Div de background -->
     <div class="absolute inset-0 ">

@@ -25,10 +25,9 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        SESSIONUtil.protection(request, response, "");
         String csrfToken = CSRFUtil.generatedToken(request.getSession(true));
         Object erreur = request.getAttribute("errorMessage");
-        if (erreur != null) request.removeAttribute("errorMessage");
+        if (erreur == null) request.removeAttribute("errorMessage");
         request.setAttribute("csrfToken", csrfToken);
         request.getRequestDispatcher(request.getContextPath() + "/login.jsp").forward(request, response);
     }
