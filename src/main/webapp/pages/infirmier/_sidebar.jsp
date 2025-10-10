@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     String currentRoute = (String) request.getAttribute("currentRoute");
+    if (currentRoute == null) currentRoute = "";
 %>
 <!-- Sidebar Navigation -->
-<aside class="w-64 bg-gradient-to-b from-blue-500 to-purple-600 text-white flex flex-col shadow-2xl">
+<aside class="relative w-64 bg-gradient-to-b from-blue-500 to-purple-600 text-white flex flex-col shadow-2xl">
 
     <!-- Logo -->
     <div class="p-6 border-b border-white border-opacity-20">

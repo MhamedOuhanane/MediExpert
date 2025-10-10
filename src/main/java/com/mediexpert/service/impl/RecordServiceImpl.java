@@ -30,8 +30,12 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public Record findRecordByCard(String carte) {
         if (carte == null) throw new IllegalArgumentException("L'id de patient ne peut pas être null.");
-        return recordRepository.findRecordByCard(carte)
-                .orElseThrow(() -> new RuntimeException("Aucun patient trouvé avec la carte: " + carte));
+        try {
+            return recordRepository.findRecordByCard(carte)
+                    .orElse(null);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     @Override
