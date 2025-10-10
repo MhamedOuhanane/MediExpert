@@ -27,8 +27,10 @@ public class AuthServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SESSIONUtil.protection(request, response, "");
         String csrfToken = CSRFUtil.generatedToken(request.getSession(true));
+        Object erreur = request.getAttribute("errorMessage");
+        if (erreur != null) request.removeAttribute("errorMessage");
         request.setAttribute("csrfToken", csrfToken);
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher(request.getContextPath() + "/login.jsp").forward(request, response);
     }
 
     @Override
@@ -46,24 +48,24 @@ public class AuthServlet extends HttpServlet {
                 case "admin":
                     Admin admin = (Admin) loggedUser;
                     SESSIONUtil.setUser(request, admin);
-                    url = "admin/dashboard.jsp";
+                    url = "/admin";
                     break;
                 case "infirmier":
                     Infirmier infirmier = (Infirmier) loggedUser;
                     SESSIONUtil.setUser(request, infirmier);
-                    url = "infirmier/dashboard.jsp";
+                    url = "/infirmier";
                     break;
 
                 case "specialiste":
                     Specialiste specialiste = (Specialiste) loggedUser;
                     SESSIONUtil.setUser(request, specialiste);
-                    url = "specialiste/dashboard.jsp";
+                    url = "/specialiste";
                     break;
 
                 default:
                     Generaliste generaliste = (Generaliste) loggedUser;
                     SESSIONUtil.setUser(request, generaliste);
-                    url = "generaliste/dashboard.jsp";
+                    url = "/generaliste";
                     break;
             }
 

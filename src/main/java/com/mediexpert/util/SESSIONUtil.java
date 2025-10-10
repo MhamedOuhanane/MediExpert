@@ -1,15 +1,11 @@
 package com.mediexpert.util;
 
-import com.mediexpert.model.Generaliste;
-import com.mediexpert.model.Infirmier;
-import com.mediexpert.model.Specialiste;
 import com.mediexpert.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class SESSIONUtil {
     private static final String USER_SESSION_KEY = "user";
@@ -28,23 +24,31 @@ public class SESSIONUtil {
         return getUser(request) != null;
     }
 
-    public static void protection(HttpServletRequest request, HttpServletResponse response, String role) throws IOException {
+    public static boolean protection(HttpServletRequest request, HttpServletResponse response, String role) throws IOException {
         boolean isLogged = isLogged(request);
+
         if (!isLogged) {
-            if (role.isEmpty()) return;
-            else response.sendRedirect("login.jsp");
+            if (role.isEmpty()) {
+                return true;
+            } else {
+                response.sendRedirect(request.getContextPath() + "/connection");
+                return false;
+            }
         } else {
             User user = getUser(request);
             String roleUser = user.getRole().getName();
-            if (Objects.equals(roleUser, role)) return;
-            switch (roleUser) {
-                case "infirmier" -> response.sendRedirect("infirmier/dashboard.jsp");
-                case "specialiste" -> response.sendRedirect("specialiste/dashboard.jsp");
-                case "generaliste" -> response.sendRedirect("generaliste/dashboard.jsp");
-                case "admin" -> response.sendRedirect("admin/dashboard.jsp");
-                default -> response.sendRedirect("login.jsp");
+
+            if (roleUser.equals(role)) {
+                return true;
             }
-            return;
+            switch (roleUser) {
+                case "infirmier" -> response.sendRedirect(request.getContextPath() + "/infirmier");
+                case "specialiste" -> response.sendRedirect(request.getContextPath() + "/specialiste");
+                case "generaliste" -> response.sendRedirect(request.getContextPath() + "/generaliste");
+                case "admin" -> response.sendRedirect(request.getContextPath() + "/admin");
+                default -> response.sendRedirect(request.getContextPath() + "/connection");
+            }
+            return false;
         }
     }
 

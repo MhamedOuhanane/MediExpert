@@ -1,10 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="fr">
-<%@ include file="partials/_head.jsp" %>
+<%@ include file="../partials/_head.jsp" %>
 <body class="bg-gradient-to-br from-blue-50 via-blue-100 to-purple-50 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
+    <!-- Div de background -->
+    <div class="absolute inset-0 ">
+        <img src="<%= request.getContextPath() %>/images/loginBack.jpg"
+             alt="Background"
+             class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-white opacity-70"></div>
+    </div>
 
+    <div class="relative w-full max-w-5xl bg-white rounded-lg shadow-2xl overflow-hidden flex flex-col md:flex-row">
         <div class="w-full md:w-1/2 p-8 md:p-12">
             <h1 class="text-3xl font-bold text-gray-800 mb-6">Connexion</h1>
 
@@ -88,17 +95,17 @@
             <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
 
             <!-- Contenu central -->
-            <div class="text-center z-10">
-                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-8 shadow-xl">
-                    <svg class="w-32 h-32 mx-auto mb-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5 0 1.93-1.57 3.5-3.5 3.5s-3.5-1.57-3.5-3.5c0-1.93 1.57-3.5 3.5-3.5zm7 13H5v-.23c0-2.31 3.07-4.27 7-4.27s7 1.96 7 4.27V19z"/>
-                    </svg>
+            <div class="text-center z-10 py-8">
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-3 shadow-xl">
+                    <div class="w-full flex items-center justify-center">
+                        <img src="${pageContext.request.contextPath}/images/loginLogo.png"
+                             alt="Logo Connection"
+                             class="w-[60%] object-cover" />
+                    </div>
                     <h2 class="text-2xl font-bold text-white mb-3">
                         MediExpert
                     </h2>
                     <p class="text-white text-opacity-90">
-                        MediExpert
-
                         Accédez à votre espace professionnel pour gérer vos dossiers médicaux, consultations et rapports d’expertise.
                     </p>
                 </div>

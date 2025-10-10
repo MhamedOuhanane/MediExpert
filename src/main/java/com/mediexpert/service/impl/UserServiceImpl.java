@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object login(String email, String password) {
+    public User login(String email, String password) {
         if (email == null || password == null) {
             throw new IllegalArgumentException("Adresse e-mail ou mot de passe ne peut pa etre null");
         }
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         if (!user.validPassword(password)) throw new IllegalArgumentException("Adresse e-mail ou mot de passe incorrect");
         String role = user.getRole().getName();
 
-        if (role.equals("specialiste")) return specialisteRepository.findSpecialiste(user.getId());
+        if (role.equals("specialiste")) return specialisteRepository.findSpecialiste(user.getId()).get();
         return user;
     }
 }

@@ -1,5 +1,6 @@
 package com.mediexpert.model;
 
+import com.mediexpert.util.DateFormat;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -157,5 +158,13 @@ public abstract class User {
 
     public boolean validPassword(String password) {
         return BCrypt.checkpw(password, this.password);
+    }
+
+    public String getCreatedAtFormatted() {
+        return DateFormat.getDateTimeFormatted(this.createdAt);
+    }
+
+    public String getUpdatedAtFormatted() {
+        return DateFormat.getDateTimeFormatted(this.updatedAt);
     }
 }
