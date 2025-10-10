@@ -1,9 +1,6 @@
 package com.mediexpert.controller;
 
-import com.mediexpert.model.Generaliste;
-import com.mediexpert.model.Infirmier;
-import com.mediexpert.model.Specialiste;
-import com.mediexpert.model.User;
+import com.mediexpert.model.*;
 import com.mediexpert.service.interfaces.RoleService;
 import com.mediexpert.service.interfaces.UserService;
 import com.mediexpert.util.CSRFUtil;
@@ -13,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -28,7 +26,7 @@ public class AuthServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         SESSIONUtil.protection(request, response, "");
-        String csrfToken = CSRFUtil.getCsrfToken(request.getSession(true));
+        String csrfToken = CSRFUtil.generatedToken(request.getSession(true));
         request.setAttribute("csrfToken", csrfToken);
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
@@ -37,8 +35,7 @@ public class AuthServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-
-        if (CSRFUtil.validationToken(request)) {
+        if (!CSRFUtil.validationToken(request)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF Token invalide");
             return;
         }
@@ -46,6 +43,11 @@ public class AuthServlet extends HttpServlet {
             User loggedUser = (User) this.userService.login(email, password);
             String url;
             switch (loggedUser.getRole().getName()) {
+                case "admin":
+                    Admin admin = (Admin) loggedUser;
+                    SESSIONUtil.setUser(request, admin);
+                    url = "admin/dashboard.jsp";
+                    break;
                 case "infirmier":
                     Infirmier infirmier = (Infirmier) loggedUser;
                     SESSIONUtil.setUser(request, infirmier);
@@ -67,11 +69,9 @@ public class AuthServlet extends HttpServlet {
 
             response.sendRedirect(url);
 
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("login.jsp").forward(request, response);
-        } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }

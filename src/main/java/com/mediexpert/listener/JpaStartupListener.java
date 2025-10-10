@@ -8,8 +8,9 @@ import com.mediexpert.util.DBUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 
-//@WebListener
+@WebListener
 public class JpaStartupListener implements ServletContextListener {
 
     @Override

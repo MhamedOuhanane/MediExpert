@@ -11,7 +11,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByEmail(String email) {
         try (EntityManager em = DBUtil.getEntityManager()) {
-            User user = em.createQuery("SELECT u FROM users u WHERE u.email = :email", User.class)
+            User user = em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                     .setParameter("email", email)
                     .getResultStream()
                     .findFirst()

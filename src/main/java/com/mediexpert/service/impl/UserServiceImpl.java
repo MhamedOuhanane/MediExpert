@@ -25,17 +25,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object login(String email, String password) {
-        if (email == null || password == null) throw new IllegalArgumentException("Adresse e-mail ou mot de passe incorrect");
-        try {
-            if (!checkEmail(email)) throw new IllegalArgumentException("Adresse e-mail ou mot de passe incorrect");
-            User user = userRepository.findByEmail(email).get();
-            if (!user.validPassword(password)) throw new IllegalArgumentException("Adresse e-mail ou mot de passe incorrect");
-            String role = user.getRole().getName();
-
-            if (role.equals("specialiste")) return specialisteRepository.findSpecialiste(user.getId());
-            return user;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Erreur dans le systeme. Veuillez réessayer plus tard");
+        if (email == null || password == null) {
+            throw new IllegalArgumentException("Adresse e-mail ou mot de passe ne peut pa etre null");
         }
+        if (!checkEmail(email)) throw new IllegalArgumentException("Adresse e-mail ou mot de passe incorrect");
+        User user = userRepository.findByEmail(email).get();
+        if (!user.validPassword(password)) throw new IllegalArgumentException("Adresse e-mail ou mot de passe incorrect");
+        String role = user.getRole().getName();
+
+        if (role.equals("specialiste")) return specialisteRepository.findSpecialiste(user.getId());
+        return user;
     }
 }
