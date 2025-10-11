@@ -64,19 +64,34 @@ public class PatientServlet extends HttpServlet {
                 req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/add-patient-form.jsp").forward(req, resp);
                 return;
             } else if (path.equals("/add")){
+                String nom = req.getParameter("nom");
+                String prenom = req.getParameter("prenom");
+                LocalDate dateNaissance = LocalDate.parse(req.getParameter("dateNaissance"));
+                String carte = req.getParameter("carte");
+                String telephone = req.getParameter("telephone");
+                Integer tension = Integer.valueOf(req.getParameter("tension"));
+                Integer frequenceCardiaque = Integer.valueOf(req.getParameter("frequenceCardiaque"));
+                Double temperature = Double.valueOf(req.getParameter("temperature"));
+                Integer frequenceRespiratoire = Integer.valueOf(req.getParameter("frequenceRespiratoire"));
+                Double poids = Double.valueOf(req.getParameter("poids"));
+                Double taille = Double.valueOf(req.getParameter("taille"));
+                StatusPatient status = StatusPatient.EN_ATTENTE;
+
                 Record record = new Record();
-                record.setNom(req.getParameter("nom"));
-                record.setPrenom(req.getParameter("prenom"));
-                record.setDateNaissance(LocalDate.parse(req.getParameter("dateNaissance")));
-                record.setCarte(req.getParameter("carte"));
-                record.setTelephone(req.getParameter("telephone"));
-                record.setTension(req.getParameter("tension"));
-                record.setFrequenceCardiaque(Integer.valueOf(req.getParameter("frequenceCardiaque")));
-                record.setTemperature(Double.valueOf(req.getParameter("temperature")));
-                record.setFrequenceRespiratoire(Integer.valueOf(req.getParameter("frequenceRespiratoire")));
-                record.setPoids(Double.valueOf(req.getParameter("poids")));
-                record.setTaille(Double.valueOf(req.getParameter("taille")));
-                record.setStatusPatient(StatusPatient.EN_ATTENTE);
+                record.setNom(nom);
+                record.setPrenom(prenom);
+                record.setDateNaissance(dateNaissance);
+                record.setCarte(carte);
+                record.setTelephone(telephone);
+                record.setTension(tension);
+                record.setFrequenceCardiaque(frequenceCardiaque);
+                record.setTemperature(temperature);
+                record.setFrequenceRespiratoire(frequenceRespiratoire);
+                record.setPoids(poids);
+                record.setTaille(taille);
+                record.setStatus(status);
+
+                System.out.printf("record", record.toString());
 
                 Record created = this.recordService.addRecord(record);
                 req.setAttribute("currentRoute", "/patients");

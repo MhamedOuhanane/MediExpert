@@ -33,7 +33,7 @@ public class Record {
     private String telephone;
 
     @Column(nullable = false)
-    private String tension;
+    private Integer tension;
 
     @Column(nullable = false)
     private Integer frequenceCardiaque;
@@ -65,7 +65,7 @@ public class Record {
 
     public Record() {}
 
-    public Record(UUID id, String nom, String prenom, LocalDate dateNaissance, String carte, String telephone, String tension, Integer frequenceCardiaque, Double temperature, Integer frequenceRespiratoire, Double poids, Double taille, StatusPatient status, LocalDateTime createdAt, LocalDateTime updatedAt, List<Consultation> consultations) {
+    public Record(UUID id, String nom, String prenom, LocalDate dateNaissance, String carte, String telephone, Integer tension, Integer frequenceCardiaque, Double temperature, Integer frequenceRespiratoire, Double poids, Double taille, StatusPatient status, LocalDateTime createdAt, LocalDateTime updatedAt, List<Consultation> consultations) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -132,11 +132,11 @@ public class Record {
         this.telephone = telephone;
     }
 
-    public String getTension() {
+    public Integer getTension() {
         return tension;
     }
 
-    public void setTension(String tension) {
+    public void setTension(Integer tension) {
         this.tension = tension;
     }
 
@@ -203,15 +203,37 @@ public class Record {
         return consultations;
     }
 
-    public StatusPatient getStatusPatient() {
+    public void setConsultations(List<Consultation> consultations) {
+        this.consultations = consultations;
+    }
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", dateNaissance=" + dateNaissance +
+                ", carte='" + carte + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", tension=" + tension +
+                ", frequenceCardiaque=" + frequenceCardiaque +
+                ", temperature=" + temperature +
+                ", frequenceRespiratoire=" + frequenceRespiratoire +
+                ", poids=" + poids +
+                ", taille=" + taille +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", consultations=" + consultations +
+                '}';
+    }
+
+    public StatusPatient getStatus() {
         return status;
     }
 
-    public void setStatusPatient(StatusPatient status) {
+    public void setStatus(StatusPatient status) {
         this.status = status;
-    }
-
-    public void setConsultations(List<Consultation> consultations) {
-        this.consultations = consultations;
     }
 }

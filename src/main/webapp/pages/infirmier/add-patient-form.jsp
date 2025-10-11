@@ -116,7 +116,7 @@
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Tension</label>
-                                    <input type="text" name="tension" placeholder="120/80"
+                                    <input type="number" name="tension" placeholder="120/80"
                                            value="<%= patient != null ? patient.getTension() : "" %>"
                                            class="w-full px-2.5 py-1.5 text-sm border-2 border-gray-200 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 outline-none bg-white">
                                 </div>
