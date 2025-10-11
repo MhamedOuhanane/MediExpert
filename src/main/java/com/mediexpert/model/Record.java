@@ -26,7 +26,7 @@ public class Record {
     @Column(nullable = false)
     private LocalDate dateNaissance;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String carte;
 
     @Column(nullable = false)

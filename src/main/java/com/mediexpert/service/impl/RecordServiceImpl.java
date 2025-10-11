@@ -1,5 +1,6 @@
 package com.mediexpert.service.impl;
 
+import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.Record;
 import com.mediexpert.repository.interfaces.RecordRepository;
 import com.mediexpert.service.interfaces.RecordService;
@@ -16,7 +17,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Record addRecord(Record record) {
-        if (record == null) throw new IllegalArgumentException("Le patient ne peut pas être null.");
+        if (record == null) throw new IllegalArgumentException("N° Sécurité Sociale de patient ne peut pas être null.");
         return recordRepository.insertRecord(record);
     }
 
@@ -48,7 +49,20 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public Record updateRecord(Record record) {
         if (record == null) throw new IllegalArgumentException("Le patient ne peut pas être null.");
-        return recordRepository.insertRecord(record);
+        try {
+            Record patient = this.findRecordByCard(record.getCarte());
+            patient.setTelephone(record.getTelephone());
+            patient.setTension(record.getTension());
+            patient.setFrequenceCardiaque(record.getFrequenceCardiaque());
+            patient.setTemperature(record.getTemperature());
+            patient.setFrequenceRespiratoire(record.getFrequenceRespiratoire());
+            patient.setPoids(record.getPoids());
+            patient.setTaille(record.getTaille());
+            patient.setStatus(StatusPatient.EN_ATTENTE);
+            return recordRepository.updateRecord(patient);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override

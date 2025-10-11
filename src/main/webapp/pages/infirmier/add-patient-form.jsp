@@ -2,7 +2,7 @@
 <%@ page import="com.mediexpert.model.Record" %>
 
 <%
-    Record patient = (Record) request.getAttribute("patient");
+    Record patient = (Record) request.getAttribute("record");
     Boolean existence = (Boolean) request.getAttribute("existence");
 %>
 
@@ -46,7 +46,6 @@
                         <div class="mb-4 text-blue-600 font-medium">Aucun patient trouvé — Vous pouvez l’ajouter.</div>
                     <% } %>
                     <form action="<%= existence ? (request.getContextPath() + "/patients/update") : (request.getContextPath() + "/patients/add") %>" method="POST">
-
                         <input type="hidden" name="csrfToken" value="${csrfToken}">
 
                         <!-- Section Informations -->
