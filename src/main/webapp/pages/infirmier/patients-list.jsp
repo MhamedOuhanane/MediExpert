@@ -195,121 +195,121 @@
 
     <!-- Modal Détails Patient -->
     <div id="detailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all animate-scale-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-scale-in flex flex-col">
             <!-- Header -->
-            <div class="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div id="modalAvatar" class="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg shadow-lg mr-4">
+                    <div class="flex items-center min-w-0 flex-1">
+                        <div id="modalAvatar" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm shadow-lg mr-3 flex-shrink-0">
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold" id="modalPatientName"></h3>
-                            <p class="text-sm text-white/80" id="modalCarte"></p>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-lg font-bold truncate" id="modalPatientName"></h3>
+                            <p class="text-xs text-white/80 truncate" id="modalCarte"></p>
                         </div>
                     </div>
-                    <button onclick="closeDetailsModal()" class="text-white/80 hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button onclick="closeDetailsModal()" class="text-white/80 hover:text-white transition ml-3 flex-shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Body -->
-            <div class="p-6 space-y-6">
+            <!-- Body - Scrollable -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
                 <!-- Informations Personnelles -->
                 <div>
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2 flex-shrink-0">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
                         </div>
-                        <h4 class="text-lg font-bold text-gray-800">Informations Personnelles</h4>
+                        <h4 class="text-base font-bold text-gray-800">Informations Personnelles</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Date de Naissance</p>
-                            <p class="text-sm font-semibold text-gray-800" id="modalDateNaissance"></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-gray-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Date de Naissance</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalDateNaissance"></p>
                         </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Téléphone</p>
-                            <p class="text-sm font-semibold text-gray-800" id="modalTelephone"></p>
+                        <div class="bg-gray-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Téléphone</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalTelephone"></p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Signes Vitaux -->
                 <div>
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-2 flex-shrink-0">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                             </svg>
                         </div>
-                        <h4 class="text-lg font-bold text-gray-800">Signes Vitaux</h4>
+                        <h4 class="text-base font-bold text-gray-800">Signes Vitaux</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Tension</p>
-                            <p class="text-sm font-semibold text-gray-800" id="modalTension"></p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Tension</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalTension"></p>
                         </div>
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Fréquence Cardiaque</p>
-                            <p class="text-sm font-semibold text-gray-800"><span id="modalFrequenceCardiaque"></span> bpm</p>
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Fréq. Cardiaque</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalFrequenceCardiaque"></span> bpm</p>
                         </div>
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Température</p>
-                            <p class="text-sm font-semibold text-gray-800"><span id="modalTemperature"></span> °C</p>
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Température</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalTemperature"></span> °C</p>
                         </div>
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Fréquence Respiratoire</p>
-                            <p class="text-sm font-semibold text-gray-800"><span id="modalFrequenceRespiratoire"></span> /min</p>
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Fréq. Respiratoire</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalFrequenceRespiratoire"></span> /min</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Mesures Physiques -->
                 <div>
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-2 flex-shrink-0">
+                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
                             </svg>
                         </div>
-                        <h4 class="text-lg font-bold text-gray-800">Mesures Physiques</h4>
+                        <h4 class="text-base font-bold text-gray-800">Mesures Physiques</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Poids</p>
-                            <p class="text-sm font-semibold text-gray-800"><span id="modalPoids"></span> kg</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-purple-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Poids</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalPoids"></span> kg</p>
                         </div>
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <p class="text-xs text-gray-500 mb-1">Taille</p>
-                            <p class="text-sm font-semibold text-gray-800"><span id="modalTaille"></span> m</p>
+                        <div class="bg-purple-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Taille</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalTaille"></span> m</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Statut et Mise à jour -->
-                <div class="border-t pt-4">
-                    <div class="grid grid-cols-2 gap-4">
+                <div class="border-t pt-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <p class="text-xs text-gray-500 mb-2">Statut</p>
-                            <span id="modalStatus" class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"></span>
+                            <p class="text-xs text-gray-500 mb-1.5">Statut</p>
+                            <span id="modalStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"></span>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 mb-1">Dernière Modification</p>
-                            <p class="text-sm font-semibold text-gray-800" id="modalUpdatedAt"></p>
+                            <p class="text-xs text-gray-500 mb-0.5">Dernière Modification</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalUpdatedAt"></p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="sticky bottom-0 bg-gray-50 p-4 rounded-b-2xl">
+            <div class="bg-gray-50 p-3 border-t">
                 <button onclick="closeDetailsModal()"
-                        class="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition">
+                        class="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
                     Fermer
                 </button>
             </div>

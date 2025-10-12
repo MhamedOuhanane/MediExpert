@@ -2,8 +2,10 @@ package com.mediexpert.controller;
 
 import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.Record;
+import com.mediexpert.model.User;
 import com.mediexpert.service.interfaces.RecordService;
 import com.mediexpert.util.CSRFUtil;
+import com.mediexpert.util.SESSIONUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,11 +32,16 @@ public class PatientServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF Token manquant");
             return;
         }
-
+        User user = SESSIONUtil.getUser(req);
         String path = req.getPathInfo() == null ? "/" : req.getPathInfo();
 
         if (path.equals("/")) {
             var records = this.recordService.getAllRecord();
+            if (user != null && user.getRole().getName().equals("generaliste")) {
+                records = records.stream()
+                        .filter(patient -> patient.getStatus().equals(StatusPatient.EN_ATTENTE))
+                        .toList();
+            }
             req.setAttribute("patients", records);
             req.setAttribute("currentRoute", "/patients");
             req.getRequestDispatcher("/pages/infirmier/patients-list.jsp").forward(req, resp);
@@ -75,7 +82,14 @@ public class PatientServlet extends HttpServlet {
                 String carte = req.getParameter("carte");
                 String redirectTo = req.getParameter("redirectTo");
                 var record = this.recordService.findRecordByCard(carte);
-
+                if (record != null) {
+                    StatusPatient statusPatient = record.getStatus();
+                    if (statusPatient.equals(StatusPatient.EN_COURS)) {
+                        req.getSession().setAttribute("errorMessage", "Le patient qui détient actuellement une carte '" + record.getCarte() + "' est consulté et ne peut pas la modifier.!");
+                        resp.sendRedirect(req.getContextPath() + "/patients");
+                        return;
+                    }
+                }
                 req.setAttribute("existence", record != null);
                 req.setAttribute("record", record);
                 req.setAttribute("carte", carte);
@@ -102,8 +116,8 @@ public class PatientServlet extends HttpServlet {
                 record.setTaille(Double.valueOf(req.getParameter("taille")));
                 record.setStatus(StatusPatient.EN_ATTENTE);
 
-                this.recordService.addRecord(record);
-                req.getSession().setAttribute("successMessage", "Le patient a été ajouté avec succès !");
+                Record record1 = this.recordService.addRecord(record);
+                req.getSession().setAttribute("successMessage", "Le patient de carte '" + record1.getCarte() + "' a été ajouté avec succès !");
                 resp.sendRedirect(req.getContextPath() + "/patients");
                 return;
             }
@@ -129,7 +143,7 @@ public class PatientServlet extends HttpServlet {
                 record.setTaille(Double.valueOf(req.getParameter("taille")));
 
                 this.recordService.updateRecord(record);
-                req.getSession().setAttribute("successMessage", "Les informations du patient ont été mises à jour !");
+                req.getSession().setAttribute("successMessage", "Les informations du patient de carte '" + record.getCarte() + "' ont été mises à jour !");
                 resp.sendRedirect(req.getContextPath() + "/patients");
                 return;
             }

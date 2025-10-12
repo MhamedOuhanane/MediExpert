@@ -9,8 +9,11 @@ public class CSRFUtil {
     private static final String CSRF_TOKEN = "csrfToken";
 
     public static String generatedToken(HttpSession session) {
-        String token = UUID.randomUUID().toString();
-        session.setAttribute(CSRF_TOKEN, token);
+        String token = (String) session.getAttribute(CSRF_TOKEN);
+        if (token == null) {
+            token = UUID.randomUUID().toString();
+            session.setAttribute(CSRF_TOKEN, token);
+        }
         return token;
     }
 
@@ -23,6 +26,6 @@ public class CSRFUtil {
     public static boolean validationToken(HttpServletRequest request) {
         String sessionToken = getCsrfToken(request.getSession(false));
         String formToken = request.getParameter(CSRF_TOKEN);
-        return sessionToken != null && sessionToken.equals(formToken);
+            return sessionToken != null && sessionToken.equals(formToken);
     }
 }

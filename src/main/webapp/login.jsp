@@ -35,7 +35,7 @@
                     <!-- Champ Email d'utilisateur -->
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Adresse e-mail
+                            Adresse e-mail<%= session.getAttribute("csrfToken") %>
                         </label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
