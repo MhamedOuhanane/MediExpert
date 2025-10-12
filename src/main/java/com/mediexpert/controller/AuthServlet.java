@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebServlet("/connection")
+@WebServlet("/auth/*")
 public class AuthServlet extends HttpServlet {
     private UserService userService;
 
@@ -25,11 +25,18 @@ public class AuthServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String csrfToken = CSRFUtil.generatedToken(request.getSession(true));
-        Object erreur = request.getAttribute("errorMessage");
-        if (erreur == null) request.removeAttribute("errorMessage");
-        request.setAttribute("csrfToken", csrfToken);
-        request.getRequestDispatcher(request.getContextPath() + "/login.jsp").forward(request, response);
+        String path = request.getPathInfo() == null ? "/" : request.getPathInfo();
+        if (path.equals("/")) {
+            String csrfToken = CSRFUtil.generatedToken(request.getSession(true));
+            Object erreur = request.getAttribute("errorMessage");
+            if (erreur == null) request.removeAttribute("errorMessage");
+            request.setAttribute("csrfToken", csrfToken);
+            request.getRequestDispatcher(request.getContextPath() + "/login.jsp").forward(request, response);
+        } else if (path.equals("/logout")) {
+            SESSIONUtil.removeUser(request);
+            response.sendRedirect(request.getContextPath() + "/auth");
+            return;
+        }
     }
 
     @Override

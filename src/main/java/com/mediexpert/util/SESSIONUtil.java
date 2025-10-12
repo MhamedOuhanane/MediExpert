@@ -31,7 +31,7 @@ public class SESSIONUtil {
             if (role.isEmpty()) {
                 return true;
             } else {
-                response.sendRedirect(request.getContextPath() + "/connection");
+                response.sendRedirect(request.getContextPath() + "/auth");
                 return false;
             }
         } else {
@@ -46,7 +46,7 @@ public class SESSIONUtil {
                 case "specialiste" -> response.sendRedirect(request.getContextPath() + "/specialiste");
                 case "generaliste" -> response.sendRedirect(request.getContextPath() + "/generaliste");
                 case "admin" -> response.sendRedirect(request.getContextPath() + "/admin");
-                default -> response.sendRedirect(request.getContextPath() + "/connection");
+                default -> response.sendRedirect(request.getContextPath() + "/auth");
             }
             return false;
         }
@@ -55,7 +55,6 @@ public class SESSIONUtil {
     public static void removeUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.removeAttribute(USER_SESSION_KEY);
             session.invalidate();
         }
     }

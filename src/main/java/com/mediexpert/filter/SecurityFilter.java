@@ -17,12 +17,20 @@ public class SecurityFilter implements Filter {
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        if (path.contains("/css/") || path.contains("/js/") || path.contains("/images/") || path.contains("/logout")) {
+        if (path.contains("/css/") || path.contains("/js/") || path.contains("/images/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (path.startsWith("/connection")) {
+        if ( path.contains("/logout")) {
+            if (!SESSIONUtil.isLogged(request)) {
+                response.sendRedirect(request.getContextPath() + "/auth");
+                return;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (path.startsWith("/auth")) {
             boolean canContinue = SESSIONUtil.protection(request, response, "");
             if (canContinue) {
                 filterChain.doFilter(request, response);
@@ -30,7 +38,7 @@ public class SecurityFilter implements Filter {
             return;
         } else {
             if (SESSIONUtil.getUser(request) == null) {
-                response.sendRedirect(request.getContextPath() + "/connection");
+                response.sendRedirect(request.getContextPath() + "/auth");
                 return;
             }
         }
