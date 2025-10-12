@@ -43,8 +43,8 @@ public class SESSIONUtil {
             }
             switch (roleUser) {
                 case "infirmier" -> response.sendRedirect(request.getContextPath() + "/infirmier");
-                case "specialiste" -> response.sendRedirect(request.getContextPath() + "/specialiste");
-                case "generaliste" -> response.sendRedirect(request.getContextPath() + "/generaliste");
+                case "specialiste" -> response.sendRedirect(request.getContextPath() + "/specialist");
+                case "generaliste" -> response.sendRedirect(request.getContextPath() + "/generalist");
                 case "admin" -> response.sendRedirect(request.getContextPath() + "/admin");
                 default -> response.sendRedirect(request.getContextPath() + "/auth");
             }

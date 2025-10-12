@@ -65,13 +65,13 @@ public class AuthServlet extends HttpServlet {
                 case "specialiste":
                     Specialiste specialiste = (Specialiste) loggedUser;
                     SESSIONUtil.setUser(request, specialiste);
-                    url = "/specialiste";
+                    url = "/specialist";
                     break;
 
                 default:
                     Generaliste generaliste = (Generaliste) loggedUser;
                     SESSIONUtil.setUser(request, generaliste);
-                    url = "/generaliste";
+                    url = "/generalist";
                     break;
             }
 
