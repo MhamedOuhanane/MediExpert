@@ -1,5 +1,6 @@
 package com.mediexpert.service.interfaces;
 
+import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.Record;
 
 import java.util.List;
@@ -11,5 +12,6 @@ public interface RecordService {
     Record findRecordByCard(String carte);
     List<Record> getAllRecord();
     Record updateRecord(Record record);
-    Boolean deleteRecord(Integer id);
+    Record updateStatus(UUID id, StatusPatient status);
+    Boolean deleteRecord(UUID id);
 }

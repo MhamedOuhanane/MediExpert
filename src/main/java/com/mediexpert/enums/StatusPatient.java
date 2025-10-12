@@ -3,7 +3,7 @@ package com.mediexpert.enums;
 public enum StatusPatient {
     EN_ATTENTE("Le patient attend sa consultation"),
     EN_COURS("Le patient est en cours de consultation"),
-    TERMINER("La consultation du patient est terminée"),
+    TERMINEE("La consultation du patient est terminée"),
     ANNULEE("La consultation du patient a été annulée");
 
     private final String description;

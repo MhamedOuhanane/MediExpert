@@ -3,6 +3,10 @@
 
 <%
     Record patient = (Record) request.getAttribute("record");
+    String catreNumber = (String) request.getAttribute("carte");
+    if (catreNumber == null) {
+        catreNumber = "";
+    }
     Boolean existence = (Boolean) request.getAttribute("existence");
 %>
 
@@ -30,6 +34,7 @@
             <div class="backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 p-6 animate-slide-up">
                  <% if (existence == null) { %>
                     <form action="<%= request.getContextPath() %>/patients/find" method="POST" class="mb-6">
+                        <input type="hidden" name="redirectTo" value="/pages/infirmier/add-patient-form.jsp">
                         <div class="flex items-end space-x-3">
                             <input id="csrfToken" type="hidden" name="csrfToken" value="${csrfToken}" >
                             <div class="flex-1">
@@ -46,6 +51,9 @@
                         <div class="mb-4 text-blue-600 font-medium">Aucun patient trouvé — Vous pouvez l’ajouter.</div>
                     <% } %>
                     <form action="<%= existence ? (request.getContextPath() + "/patients/update") : (request.getContextPath() + "/patients/add") %>" method="POST">
+                        <% if (existence) { %>
+                            <input type="hidden" name="_method" value="PUT">
+                        <% } %>
                         <input type="hidden" name="csrfToken" value="${csrfToken}">
 
                         <!-- Section Informations -->
@@ -87,8 +95,8 @@
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">N° Sécurité Sociale *</label>
                                     <input type="text" name="carte" required
-                                           value="<%= patient != null ? patient.getCarte() : "" %>"
-                                           <%= existence ? "readonly" : "" %>
+                                           value="<%= patient != null ? patient.getCarte() : catreNumber %>"
+                                           <%= catreNumber == "" ? "" : "readonly" %>
                                            class="w-full px-2.5 py-1.5 text-sm border-2 border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none <%= existence ? "bg-gray-50" : "" %>">
                                 </div>
 

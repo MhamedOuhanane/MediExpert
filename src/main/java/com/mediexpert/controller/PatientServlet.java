@@ -4,7 +4,6 @@ import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.Record;
 import com.mediexpert.service.interfaces.RecordService;
 import com.mediexpert.util.CSRFUtil;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @WebServlet("/patients/*")
 public class PatientServlet extends HttpServlet {
@@ -27,21 +27,25 @@ public class PatientServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String csrfToken = CSRFUtil.getCsrfToken(req.getSession(false));
         if (csrfToken == null) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF Token pas exist");
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF Token manquant");
             return;
         }
+
         String path = req.getPathInfo() == null ? "/" : req.getPathInfo();
+
         if (path.equals("/")) {
             var records = this.recordService.getAllRecord();
-            req.setAttribute("records", records);
+            req.setAttribute("patients", records);
             req.setAttribute("currentRoute", "/patients");
-            req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/patients-list.jsp").forward(req, resp);
+            req.getRequestDispatcher("/pages/infirmier/patients-list.jsp").forward(req, resp);
             return;
-        } else if (path.equals("/add")){
+        }
+
+        if (path.equals("/add")) {
             req.setAttribute("csrfToken", csrfToken);
-            req.setAttribute("patient", null);
+            req.setAttribute("record", null);
             req.setAttribute("currentRoute", "/patients/add");
-            req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/add-patient-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("/pages/infirmier/add-patient-form.jsp").forward(req, resp);
             return;
         }
     }
@@ -52,85 +56,111 @@ public class PatientServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "CSRF Token invalide");
             return;
         }
+
+        String method = req.getParameter("_method");
+        if (method != null) {
+            if ("PUT".equalsIgnoreCase(method)) {
+                doPut(req, resp);
+                return;
+            } else if ("DELETE".equalsIgnoreCase(method)) {
+                doDelete(req, resp);
+                return;
+            }
+        }
+
         String path = req.getPathInfo() == null ? "/" : req.getPathInfo();
 
         try {
             if (path.equals("/find")) {
-                var carte = req.getParameter("carte");
+                String carte = req.getParameter("carte");
+                String redirectTo = req.getParameter("redirectTo");
                 var record = this.recordService.findRecordByCard(carte);
+
                 req.setAttribute("existence", record != null);
                 req.setAttribute("record", record);
-                req.setAttribute("currentRoute", "/patients/add");
-                req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/add-patient-form.jsp").forward(req, resp);
-                return;
-            } else if (path.equals("/add")){
-                String nom = req.getParameter("nom");
-                String prenom = req.getParameter("prenom");
-                LocalDate dateNaissance = LocalDate.parse(req.getParameter("dateNaissance"));
-                String carte = req.getParameter("carte");
-                String telephone = req.getParameter("telephone");
-                Integer tension = Integer.valueOf(req.getParameter("tension"));
-                Integer frequenceCardiaque = Integer.valueOf(req.getParameter("frequenceCardiaque"));
-                Double temperature = Double.valueOf(req.getParameter("temperature"));
-                Integer frequenceRespiratoire = Integer.valueOf(req.getParameter("frequenceRespiratoire"));
-                Double poids = Double.valueOf(req.getParameter("poids"));
-                Double taille = Double.valueOf(req.getParameter("taille"));
-                StatusPatient status = StatusPatient.EN_ATTENTE;
-
-                Record record = new Record();
-                record.setNom(nom);
-                record.setPrenom(prenom);
-                record.setDateNaissance(dateNaissance);
-                record.setCarte(carte);
-                record.setTelephone(telephone);
-                record.setTension(tension);
-                record.setFrequenceCardiaque(frequenceCardiaque);
-                record.setTemperature(temperature);
-                record.setFrequenceRespiratoire(frequenceRespiratoire);
-                record.setPoids(poids);
-                record.setTaille(taille);
-                record.setStatus(status);
-
-                Record created = this.recordService.addRecord(record);
-                req.setAttribute("currentRoute", "/patients");
-                req.setAttribute("successMessage", "Le partient est ajouter avec success");
-                req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/patients-list.jsp").forward(req, resp);
-                return;
-            } else if (path.equals("/update")) {
-
-                String carte = req.getParameter("carte");
-                String telephone = req.getParameter("telephone");
-                Integer tension = Integer.valueOf(req.getParameter("tension"));
-                Integer frequenceCardiaque = Integer.valueOf(req.getParameter("frequenceCardiaque"));
-                Double temperature = Double.valueOf(req.getParameter("temperature"));
-                Integer frequenceRespiratoire = Integer.valueOf(req.getParameter("frequenceRespiratoire"));
-                Double poids = Double.valueOf(req.getParameter("poids"));
-                Double taille = Double.valueOf(req.getParameter("taille"));
-
-                Record record = new Record();
-
-                record.setCarte(carte);
-                record.setTelephone(telephone);
-                record.setTension(tension);
-                record.setFrequenceCardiaque(frequenceCardiaque);
-                record.setTemperature(temperature);
-                record.setFrequenceRespiratoire(frequenceRespiratoire);
-                record.setPoids(poids);
-                record.setTaille(taille);
-
-
-                Record created = this.recordService.updateRecord(record);
-
-                req.setAttribute("currentRoute", "/patients");
-                req.setAttribute("successMessage", "Modifier les information de partient " + created.getNom() + " " + created.getPrenom() + " avec success");
-                req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/patients-list.jsp").forward(req, resp);
+                req.setAttribute("carte", carte);
+                req.setAttribute("csrfToken", CSRFUtil.getCsrfToken(req.getSession()));
+                if (redirectTo == null || redirectTo.isEmpty()) {
+                    redirectTo = "/pages/infirmier/add-patient-form.jsp";
+                }
+                req.getRequestDispatcher(redirectTo).forward(req, resp);
                 return;
             }
-        } catch (RuntimeException e) {
-            req.setAttribute("errorMessage", e.getMessage());
-            req.setAttribute("currentRoute", "/patients/add");
-            req.getRequestDispatcher(req.getContextPath() + "/pages/infirmier/add-patient-form.jsp").forward(req, resp);
+
+            if (path.equals("/add")) {
+                Record record = new Record();
+                record.setNom(req.getParameter("nom"));
+                record.setPrenom(req.getParameter("prenom"));
+                record.setDateNaissance(LocalDate.parse(req.getParameter("dateNaissance")));
+                record.setCarte(req.getParameter("carte"));
+                record.setTelephone(req.getParameter("telephone"));
+                record.setTension(Integer.valueOf(req.getParameter("tension")));
+                record.setFrequenceCardiaque(Integer.valueOf(req.getParameter("frequenceCardiaque")));
+                record.setTemperature(Double.valueOf(req.getParameter("temperature")));
+                record.setFrequenceRespiratoire(Integer.valueOf(req.getParameter("frequenceRespiratoire")));
+                record.setPoids(Double.valueOf(req.getParameter("poids")));
+                record.setTaille(Double.valueOf(req.getParameter("taille")));
+                record.setStatus(StatusPatient.EN_ATTENTE);
+
+                this.recordService.addRecord(record);
+                req.getSession().setAttribute("successMessage", "Le patient a été ajouté avec succès !");
+                resp.sendRedirect(req.getContextPath() + "/patients");
+                return;
+            }
+        } catch (Exception e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/patients/add");
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo() == null ? "/" : req.getPathInfo();
+        try {
+            if (path.equals("/update")) {
+                Record record = new Record();
+                record.setCarte(req.getParameter("carte"));
+                record.setTelephone(req.getParameter("telephone"));
+                record.setTension(Integer.valueOf(req.getParameter("tension")));
+                record.setFrequenceCardiaque(Integer.valueOf(req.getParameter("frequenceCardiaque")));
+                record.setTemperature(Double.valueOf(req.getParameter("temperature")));
+                record.setFrequenceRespiratoire(Integer.valueOf(req.getParameter("frequenceRespiratoire")));
+                record.setPoids(Double.valueOf(req.getParameter("poids")));
+                record.setTaille(Double.valueOf(req.getParameter("taille")));
+
+                this.recordService.updateRecord(record);
+                req.getSession().setAttribute("successMessage", "Les informations du patient ont été mises à jour !");
+                resp.sendRedirect(req.getContextPath() + "/patients");
+                return;
+            }
+
+            if (path.equals("/status")) {
+                UUID id = UUID.fromString(req.getParameter("id"));
+                StatusPatient status = StatusPatient.valueOf(req.getParameter("status"));
+                this.recordService.updateStatus(id, status);
+                req.getSession().setAttribute("successMessage", "Statut du patient modifié !");
+                resp.sendRedirect(req.getContextPath() + "/patients");
+            }
+
+        } catch (Exception e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/patients");
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            UUID id = UUID.fromString(req.getParameter("id"));
+            boolean deleted = recordService.deleteRecord(id);
+            if (deleted)
+                req.getSession().setAttribute("successMessage", "Patient supprimé avec succès !");
+            else
+                req.getSession().setAttribute("errorMessage", "Erreur lors de la suppression !");
+            resp.sendRedirect(req.getContextPath() + "/patients");
+        } catch (Exception e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/patients");
+        }
+    }
 }

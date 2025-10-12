@@ -66,7 +66,27 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Boolean deleteRecord(Integer id) {
-        return null;
+    public Record updateStatus(UUID id, StatusPatient status) {
+        if (id == null) throw new IllegalArgumentException("L'id de patient ne peut pas être null.");
+        if (status == null) throw new IllegalArgumentException("La nouvelle status de patient ne peut pas être null.");
+        try {
+            Record patient = this.findRecordById(id);
+            if (patient.getStatus() != StatusPatient.EN_ATTENTE) throw new RuntimeException("Vous ne devez pas annuler le traitement d’un patient qui suit un consultation.");
+            patient.setStatus(status);
+            return recordRepository.updateRecord(patient);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Boolean deleteRecord(UUID id) {
+        if (id == null) throw new IllegalArgumentException("L'id de patient ne peut pas être null.");
+        try {
+            Record record = findRecordById(id);
+            return recordRepository.deleteRecord(record);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 }

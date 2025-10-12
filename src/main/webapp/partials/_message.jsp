@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-    String message = (String) request.getAttribute("successMessage");
-    String error = (String) request.getAttribute("errorMessage");
-    request.removeAttribute("successMessage");
-    request.removeAttribute("errorMessage");
+    String message = (String) session.getAttribute("successMessage");
+    String error = (String) session.getAttribute("errorMessage");
+    session.removeAttribute("successMessage");
+    session.removeAttribute("errorMessage");
 %>
 
 <div id="messageBox" class="fixed top-4 right-4 space-y-2 z-50 transition-opacity duration-500">
