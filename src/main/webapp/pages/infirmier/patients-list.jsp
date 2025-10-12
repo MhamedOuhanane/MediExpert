@@ -331,6 +331,7 @@
                 </p>
                 <form id="cancelForm" action="${pageContext.request.contextPath}/patients/status" method="POST">
                     <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="status" value="ANNULEE">
                     <input type="hidden" name="id" id="cancelPatientId">
                     <input type="hidden" name="csrfToken" value="${csrfToken}">
                     <div class="flex space-x-3">

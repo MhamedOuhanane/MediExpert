@@ -42,7 +42,12 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<Record> getAllRecord() {
         return this.recordRepository.selectRecord().stream()
-                .sorted((r1, r2) -> r1.getUpdatedAt().compareTo(r2.getUpdatedAt()))
+                .sorted((r1, r2) -> {
+                    int o1 = getStatusOrder(r1.getStatus().toString());
+                    int o2 = getStatusOrder(r2.getStatus().toString());
+                    if (r1 != r2) return Integer.compare(o1, o2);
+                    return r2.getUpdatedAt().compareTo(r1.getUpdatedAt());
+                })
                 .toList();
     }
 
@@ -88,5 +93,15 @@ public class RecordServiceImpl implements RecordService {
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    private int getStatusOrder(String status) {
+        return switch (status) {
+            case "EN_ATTENTE" -> 1;
+            case "EN_COURS" -> 2;
+            case "TERMINEE" -> 3;
+            case "ANNULEE" -> 4;
+            default -> 5;
+        };
     }
 }
