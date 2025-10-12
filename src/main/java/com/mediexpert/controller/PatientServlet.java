@@ -37,14 +37,16 @@ public class PatientServlet extends HttpServlet {
 
         if (path.equals("/")) {
             var records = this.recordService.getAllRecord();
+            String url = "/pages/infirmier/patients-list.jsp";
             if (user != null && user.getRole().getName().equals("generaliste")) {
                 records = records.stream()
                         .filter(patient -> patient.getStatus().equals(StatusPatient.EN_ATTENTE))
                         .toList();
+                url = "/pages/generalist/patients-list.jsp";
             }
             req.setAttribute("patients", records);
             req.setAttribute("currentRoute", "/patients");
-            req.getRequestDispatcher("/pages/infirmier/patients-list.jsp").forward(req, resp);
+            req.getRequestDispatcher(url).forward(req, resp);
             return;
         }
 

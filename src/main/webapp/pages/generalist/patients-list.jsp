@@ -1,0 +1,419 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.mediexpert.model.Record" %>
+<%@ page import="com.mediexpert.model.ActesTechniques" %>
+<%@ page import="com.mediexpert.enums.StatusPatient" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+
+<%
+    List<Record> patients = (List<Record>) request.getAttribute("patients");
+    List<ActesTechniques> actesTechniques = (List<ActesTechniques>) request.getAttribute("actesTechniques");
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+%>
+
+<!DOCTYPE html>
+<html lang="fr">
+<jsp:include page="${pageContext.request.contextPath}/partials/_head.jsp" />
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 min-h-screen">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <%@ include file="_sidebar.jsp" %>
+
+        <main class="flex-1 overflow-y-auto p-3">
+            <!-- Section: Liste des Patients -->
+            <div id="patients-list-section">
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                            <svg class="w-7 h-7 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Liste des Patients
+                        </h3>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gradient-to-r from-blue-50 to-purple-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Nom Prénom</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">N° Carte</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Modifié</th>
+                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 uppercase">Statut</th>
+                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <%
+                                if (patients != null && !patients.isEmpty()) {
+                                    for (Record patient : patients) {
+                                        String initials = patient.getPrenom().substring(0, 1).toUpperCase() +
+                                                        patient.getNom().substring(0, 1).toUpperCase();
+                                        String statusColor = "";
+                                        String statusLabel = "";
+
+                                        switch (patient.getStatus()) {
+                                            case EN_ATTENTE:
+                                                statusColor = "bg-yellow-100 text-yellow-800 border-yellow-300";
+                                                statusLabel = "En Attente";
+                                                break;
+                                            case EN_COURS:
+                                                statusColor = "bg-blue-100 text-blue-800 border-blue-300";
+                                                statusLabel = "En Cours";
+                                                break;
+                                            case TERMINEE:
+                                                statusColor = "bg-green-100 text-green-800 border-green-300";
+                                                statusLabel = "Terminé";
+                                                break;
+                                            case ANNULEE:
+                                                statusColor = "bg-red-100 text-red-800 border-red-300";
+                                                statusLabel = "Annulé";
+                                                break;
+                                            default:
+                                                statusColor = "bg-gray-100 text-gray-800 border-gray-300";
+                                                statusLabel = patient.getStatus().toString();
+                                        }
+                                %>
+                                <tr class="hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition duration-200">
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                                                <%= initials %>
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="text-sm font-bold text-gray-900">
+                                                    <%= patient.getPrenom() %> <%= patient.getNom() %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="text-sm font-mono text-gray-700"><%= patient.getCarte() %></span>
+                                    </td>
+
+                                    <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-600">
+                                        <%= patient.getUpdatedAt().format(dateTimeFormatter) %>
+                                    </td>
+
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border <%= statusColor %>">
+                                            <%= statusLabel %>
+                                        </span>
+                                    </td>
+
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <div class="flex justify-center space-x-1.5">
+                                            <!-- Voir détails -->
+                                            <button onclick='showPatientDetails(<%=
+                                                "{" +
+                                                "\"id\":\"" + patient.getId() + "\"," +
+                                                "\"nom\":\"" + patient.getNom() + "\"," +
+                                                "\"prenom\":\"" + patient.getPrenom() + "\"," +
+                                                "\"dateNaissance\":\"" + patient.getDateNaissance().format(dateFormatter) + "\"," +
+                                                "\"carte\":\"" + patient.getCarte() + "\"," +
+                                                "\"telephone\":\"" + patient.getTelephone() + "\"," +
+                                                "\"tension\":\"" + (patient.getTension() != null ? patient.getTension() : "-") + "\"," +
+                                                "\"frequenceCardiaque\":\"" + (patient.getFrequenceCardiaque() != null ? patient.getFrequenceCardiaque() : "-") + "\"," +
+                                                "\"temperature\":\"" + (patient.getTemperature() != null ? patient.getTemperature() : "-") + "\"," +
+                                                "\"frequenceRespiratoire\":\"" + (patient.getFrequenceRespiratoire() != null ? patient.getFrequenceRespiratoire() : "-") + "\"," +
+                                                "\"poids\":\"" + (patient.getPoids() != null ? patient.getPoids() : "-") + "\"," +
+                                                "\"taille\":\"" + (patient.getTaille() != null ? patient.getTaille() : "-") + "\"," +
+                                                "\"status\":\"" + statusLabel + "\"," +
+                                                "\"statusColor\":\"" + statusColor + "\"," +
+                                                "\"updatedAt\":\"" + patient.getUpdatedAt().format(dateTimeFormatter) + "\"" +
+                                                "}"
+                                            %>)'
+                                                    class="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg transition"
+                                                    title="Voir détails">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Nouvelle Consultation -->
+                                            <% if (patient.getStatus().equals(StatusPatient.EN_ATTENTE)) { %>
+                                            <button onclick="showConsultationModal('<%= patient.getId() %>', '<%= patient.getPrenom() %> <%= patient.getNom() %>')"
+                                                    class="p-1.5 text-green-600 hover:bg-green-100 rounded-lg transition"
+                                                    title="Nouvelle Consultation">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </button>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <%
+                                    }
+                                } else {
+                                %>
+                                <tr>
+                                    <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                        </svg>
+                                        Aucun patient trouvé
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <% if (patients != null && !patients.isEmpty()) { %>
+                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                        <div class="text-xs text-gray-600">
+                            Total: <span class="font-bold"><%= patients.size() %></span> patient(s)
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Détails Patient -->
+    <div id="detailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-scale-in flex flex-col">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center min-w-0 flex-1">
+                        <div id="modalAvatar" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm shadow-lg mr-3 flex-shrink-0"></div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-lg font-bold truncate" id="modalPatientName"></h3>
+                            <p class="text-xs text-white/80 truncate" id="modalCarte"></p>
+                        </div>
+                    </div>
+                    <button onclick="closeDetailsModal()" class="text-white/80 hover:text-white transition ml-3 flex-shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                <div>
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-2 flex-shrink-0">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-base font-bold text-gray-800">Informations Personnelles</h4>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-gray-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Date de Naissance</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalDateNaissance"></p>
+                        </div>
+                        <div class="bg-gray-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Téléphone</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalTelephone"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-2 flex-shrink-0">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-base font-bold text-gray-800">Signes Vitaux</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Tension</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalTension"></p>
+                        </div>
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Fréq. Cardiaque</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalFrequenceCardiaque"></span> bpm</p>
+                        </div>
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Température</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalTemperature"></span> °C</p>
+                        </div>
+                        <div class="bg-green-50 p-2 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Fréq. Respiratoire</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalFrequenceRespiratoire"></span> /min</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-2 flex-shrink-0">
+                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-base font-bold text-gray-800">Mesures Physiques</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-purple-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Poids</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalPoids"></span> kg</p>
+                        </div>
+                        <div class="bg-purple-50 p-2.5 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-0.5">Taille</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate"><span id="modalTaille"></span> m</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t pt-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1.5">Statut</p>
+                            <span id="modalStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"></span>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-0.5">Dernière Modification</p>
+                            <p class="text-sm font-semibold text-gray-800 truncate" id="modalUpdatedAt"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-3 border-t">
+                <button onclick="closeDetailsModal()"
+                        class="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nouvelle Consultation -->
+    <div id="consultationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden transform transition-all animate-scale-in flex flex-col">
+            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mr-3">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Nouvelle Consultation</h3>
+                            <p class="text-xs text-white/80" id="consultationPatientName"></p>
+                        </div>
+                    </div>
+                    <button onclick="closeConsultationModal()" class="text-white/80 hover:text-white transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <form id="consultationForm" action="${pageContext.request.contextPath}/consultations/add" method="POST" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <input type="hidden" name="recordId" id="consultationRecordId">
+                <input type="hidden" name="csrfToken" value="${csrfToken}">
+
+                <!-- Raison de la consultation -->
+                <div>
+                    <label for="raison" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Raison de la consultation <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text"
+                           id="raison"
+                           name="raison"
+                           required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm"
+                           placeholder="Ex: Consultation de routine, Douleur abdominale...">
+                </div>
+
+                <!-- Observations -->
+                <div>
+                    <label for="observations" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Observations <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="observations"
+                              name="observations"
+                              required
+                              rows="4"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm resize-none"
+                              placeholder="Notez vos observations médicales..."></textarea>
+                </div>
+
+                <!-- Prix -->
+                <div>
+                    <label for="prix" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Prix de la consultation (DH) <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number"
+                           id="prix"
+                           name="prix"
+                           required
+                           min="0"
+                           step="0.01"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm"
+                           placeholder="0.00">
+                </div>
+
+                <!-- Actes Techniques (Select Multiple) -->
+                <div>
+                    <label for="actesTechniques" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Actes Techniques (optionnel)
+                    </label>
+                    <select id="actesTechniques"
+                            name="actesTechniques"
+                            multiple
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm"
+                            size="5">
+                        <%
+                        if (actesTechniques != null && !actesTechniques.isEmpty()) {
+                            for (ActesTechniques acte : actesTechniques) {
+                        %>
+                        <option value="<%= acte.getId() %>"><%= acte.getNom() %> - <%= acte.getPrix() %> DH</option>
+                        <%
+                            }
+                        }
+                        %>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Maintenez Ctrl (Windows) ou Cmd (Mac) pour sélectionner plusieurs actes</p>
+                </div>
+
+                <div class="bg-gray-50 p-3 -mx-4 -mb-4 mt-6 border-t flex space-x-3">
+                    <button type="button"
+                            onclick="closeConsultationModal()"
+                            class="flex-1 px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition text-sm">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
+                        Créer la consultation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        @keyframes scale-in {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .animate-scale-in {
+            animation: scale-in 0.2s ease-out;
+        }
+    </style>
+
+    <script src="${pageContext.request.contextPath}/js/patient.js"></script>
+</body>
+</html>
