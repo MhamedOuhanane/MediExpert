@@ -17,7 +17,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Record addRecord(Record record) {
-        if (record == null) throw new IllegalArgumentException("N° Sécurité Sociale de patient ne peut pas être null.");
+        if (record == null) throw new IllegalArgumentException("Le patient ne peut pas être null.");
         return recordRepository.insertRecord(record);
     }
 

@@ -1,6 +1,7 @@
 package com.mediexpert.controller;
 
 import com.mediexpert.enums.StatusPatient;
+import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Record;
 import com.mediexpert.model.User;
 import com.mediexpert.service.interfaces.RecordService;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @WebServlet("/patients/*")
 public class PatientServlet extends HttpServlet {
     private RecordService recordService;
+    private ActesTechniques recordService;
 
     @Override
     public void init() {
