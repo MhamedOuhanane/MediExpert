@@ -225,9 +225,9 @@ public class Record {
                 ", status=" + status +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", consultations=" + consultations +
                 '}';
     }
+
 
     public StatusPatient getStatus() {
         return status;

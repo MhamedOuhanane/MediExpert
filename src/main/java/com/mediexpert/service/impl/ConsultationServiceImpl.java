@@ -1,23 +1,40 @@
 package com.mediexpert.service.impl;
 
+import com.mediexpert.enums.StatusPatient;
+import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Consultation;
+import com.mediexpert.model.Record;
 import com.mediexpert.repository.interfaces.ConsultationRepository;
 import com.mediexpert.service.interfaces.ConsultationService;
+import com.mediexpert.service.interfaces.RecordService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationRepository consultationRepository;
+    private final RecordService recordService;
 
-    public ConsultationServiceImpl(ConsultationRepository consultationRepository) {
+    public ConsultationServiceImpl(ConsultationRepository consultationRepository, RecordService recordService) {
         this.consultationRepository = consultationRepository;
+        this.recordService = recordService;
     }
 
     @Override
     public Consultation addConsultation(Consultation consultation) {
         if (consultation == null) throw new IllegalArgumentException("Le consultation ne peut pas être null.");
-        return consultationRepository.insertConsultation(consultation);
+        try {
+            Record patient = recordService.findRecordById(consultation.getRecord().getId());
+            if (patient == null || !patient.getStatus().equals(StatusPatient.EN_ATTENTE)) throw new IllegalArgumentException("Une consultation ne peut être effectuée pour un patient qui n'est pas sur la liste d'attente.");
+            Consultation consultation1 = consultationRepository.insertConsultation(consultation);
+            if (consultation1 != null) {
+                patient = recordService.updateStatus(consultation.getRecord().getId(), StatusPatient.EN_COURS);
+            }
+            return consultation1;
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override

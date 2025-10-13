@@ -21,7 +21,7 @@ public class ActesTechniques {
     @Column(nullable = false)
     private Double prix;
 
-    @ManyToMany(mappedBy = "actesTechniques", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "actesTechniques")
     private List<Consultation> consultations = new ArrayList<>();
 
     private LocalDateTime createdAt;

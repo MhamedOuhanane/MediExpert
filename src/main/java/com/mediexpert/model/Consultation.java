@@ -43,7 +43,7 @@ public class Consultation {
     @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL)
     private List<Demande> demandes = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "actes_techniques_consultation",
             joinColumns = @JoinColumn(name = "consultation_id"),
@@ -147,5 +147,18 @@ public class Consultation {
 
     public void setActesTechniques(List<ActesTechniques> actesTechniques) {
         this.actesTechniques = actesTechniques;
+    }
+
+    @Override
+    public String toString() {
+        return "Consultation{" +
+                "id=" + id +
+                ", raison='" + raison + '\'' +
+                ", observations='" + observations + '\'' +
+                ", prix=" + prix +
+                ", statut=" + statut +
+                ", recordId=" + (record != null ? record.getId() : null) +
+                ", actesTechniquesCount=" + (actesTechniques != null ? actesTechniques.size() : 0) +
+                '}';
     }
 }

@@ -1,18 +1,22 @@
 package com.mediexpert.repository.impl;
 
+import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Consultation;
 import com.mediexpert.model.Consultation;
+import com.mediexpert.model.Record;
+import com.mediexpert.repository.interfaces.ActesTechniquesRepository;
 import com.mediexpert.repository.interfaces.ConsultationRepository;
+import com.mediexpert.repository.interfaces.RecordRepository;
 import com.mediexpert.util.DBUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class ConsultationRepositoryImpl implements ConsultationRepository {
-
 
     @Override
     public Consultation insertConsultation(Consultation consultation) {
@@ -20,6 +24,19 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
+                double prix = consultation.getPrix();
+                Record patient = em.find(Record.class, consultation.getRecord().getId());
+                consultation.setRecord(patient);
+                if (!consultation.getActesTechniques().isEmpty()) {
+                    List<ActesTechniques> listActes = new ArrayList<>();
+                    for (ActesTechniques act : consultation.getActesTechniques()) {
+                        ActesTechniques actesTechniques = em.find(ActesTechniques.class, act.getId());
+                        prix += (actesTechniques.getPrix());
+                        listActes.add(actesTechniques);
+                    }
+                    consultation.setPrix(prix);
+                    consultation.setActesTechniques(listActes);
+                }
                 em.persist(consultation);
                 tx.commit();
                 return consultation;

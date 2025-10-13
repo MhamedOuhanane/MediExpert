@@ -1,15 +1,23 @@
 package com.mediexpert.controller;
 
+import com.mediexpert.enums.ConsultationStatut;
+import com.mediexpert.model.ActesTechniques;
+import com.mediexpert.model.Consultation;
 import com.mediexpert.model.Record;
 import com.mediexpert.service.interfaces.ConsultationService;
 import com.mediexpert.util.CSRFUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+@WebServlet("/consultations/*")
 public class ConsultationServlet extends HttpServlet {
     private ConsultationService consultationService;
 
@@ -45,10 +53,30 @@ public class ConsultationServlet extends HttpServlet {
         try {
             if ("/add".equals(path)) {
                 Record record = new Record();
-                record.setId(req.getParameter(""));
-            }
-        } catch (RuntimeException e) {
+                Consultation consultation = new Consultation();
 
+                consultation.setRecord(record);
+                record.setId(UUID.fromString(req.getParameter("recordId")));
+                consultation.setRaison(req.getParameter("raison"));
+                consultation.setObservations(req.getParameter("observations"));
+                consultation.setPrix(Double.parseDouble(req.getParameter("prix")));
+                consultation.setStatut(ConsultationStatut.TERMINEE);
+                List<ActesTechniques> listAct = new ArrayList<>();
+                String[] actsId = req.getParameterValues("actesTechniques");
+                for (String actId : actsId) {
+                    ActesTechniques actesTechniques = new ActesTechniques();
+                    actesTechniques.setId(UUID.fromString(actId));
+                    listAct.add(actesTechniques);
+                }
+                if (!listAct.isEmpty()) consultation.setActesTechniques(listAct);
+                Consultation consultation1 = consultationService.addConsultation(consultation);
+                req.getSession().setAttribute("successMessage", "Le consultation de patient de carte '" + consultation1.getRecord().getCarte() + "' a été ajouté avec succès !");
+                resp.sendRedirect(req.getContextPath() + "/patients");
+                return;
+            }
+        } catch (Exception e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/patients");
         }
 
 

@@ -1,8 +1,8 @@
 package com.mediexpert.enums;
 
 public enum ConsultationStatut {
-    EN_ATTENTE_AVIS_SPECIALISTE(""),
-    TERMINEE("");
+    EN_ATTENTE_AVIS_SPECIALISTE("En attente de l'avis du spécialiste"),
+    TERMINEE("Consultation terminée");
 
     private final String description;
 
