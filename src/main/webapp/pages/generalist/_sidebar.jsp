@@ -37,18 +37,9 @@
            class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg transition duration-200
            <%= currentRoute.equals("/consultations") ? "bg-white bg-opacity-20" : "hover:bg-white hover:bg-opacity-20" %>">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-8h8v2H8v-2zm0 4h8v2H8v-2zm0-8h5v2H8V8z"/>
             </svg>
-            <span>Ajouter Patient</span>
-        </a>
-
-        <a href="/consultations/add"
-           class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg transition duration-200
-           <%= currentRoute.equals("/consultations/add") ? "bg-white bg-opacity-20" : "hover:bg-white hover:bg-opacity-20" %>">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            <span>Ajouter Patient</span>
+            <span>Liste des Consultations</span>
         </a>
     </nav>
 

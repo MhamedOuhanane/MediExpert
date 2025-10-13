@@ -1,11 +1,14 @@
 package com.mediexpert.controller;
 
 import com.mediexpert.enums.ConsultationStatut;
+import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Consultation;
 import com.mediexpert.model.Record;
+import com.mediexpert.model.User;
 import com.mediexpert.service.interfaces.ConsultationService;
 import com.mediexpert.util.CSRFUtil;
+import com.mediexpert.util.SESSIONUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,7 +31,27 @@ public class ConsultationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        User user = SESSIONUtil.getUser(req);
+        String path = req.getPathInfo() == null ? "/" : req.getPathInfo();
+
+        if (path.equals("/")) {
+            var consultations = this.consultationService.getAllConsultation();
+            for (Consultation c : consultations) {
+                c.getActesTechniques().size();
+            }
+            String url = "/pages/generalist/consultations.jsp";
+            if (user != null && user.getRole().getName().equals("specialiste")) {
+                consultations = consultations.stream()
+                        .filter(consul -> consul.getStatut().equals(ConsultationStatut.EN_ATTENTE_AVIS_SPECIALISTE))
+                        .toList();
+
+                url = "/pages/generalist/consultation.jsp";
+            }
+            req.setAttribute("consultations", consultations);
+            req.setAttribute("currentRoute", "/consultations");
+            req.getRequestDispatcher(url).forward(req, resp);
+            return;
+        }
     }
 
     @Override

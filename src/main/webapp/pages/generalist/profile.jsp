@@ -16,7 +16,7 @@
                         <!-- En-tête du profil avec image de fond -->
                         <div class="relative h-32 w-full overflow-hidden">
                             <!-- Image en arrière-plan -->
-                            <img src="${pageContext.request.contextPath}/images/nurseBackg.jpg"
+                            <img src="${pageContext.request.contextPath}/images/generalistLogo.jpg"
                                  alt="Logo de fond"
                                  class="w-full bg-contain" />
                         </div>
