@@ -16,7 +16,7 @@
                         <!-- En-tête du profil avec image de fond -->
                         <div class="relative h-32 w-full overflow-hidden">
                             <!-- Image en arrière-plan -->
-                            <img src="${pageContext.request.contextPath}/images/generalistBackg.jpg"
+                            <img src="${pageContext.request.contextPath}/images/specialistBackg.jpg"
                                  alt="Logo de fond"
                                  class="w-full bg-contain" />
                         </div>
@@ -25,15 +25,15 @@
                             <!-- Photo de profil -->
                             <div class="flex items-end -mt-16 mb-6">
                                 <div class="relative">
-                                    <div class="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-gradient-to-br from-blue-200 to-purple-200 flex items-center justify-center">
-                                        <img src="${pageContext.request.contextPath}/images/generalistLogo.png"
-                                             alt="Logo Generalist"
-                                             class="h-40 object-cover" />
+                                    <div class="w-32 h-32 rounded-full border-4 border-white shadow-xl bg-gradient-to-br from-purple-300 to-blue-400 flex items-center justify-center">
+                                        <img src="${pageContext.request.contextPath}/images/specialistLogo.png"
+                                             alt="Logo Speciliste"
+                                             class="h-[9.3rem] object-cover" />
                                     </div>
                                 </div>
                                 <div class="ml-6">
-                                    <h3 class="text-2xl font-bold text-gray-800">Generalist</h3>
-                                    <p class="text-gray-600">Professionnel de santé</p>
+                                    <h3 class="text-2xl font-bold text-gray-800">M. ${specialist.nom} ${specialist.prenom}</h3>
+                                    <p class="text-gray-600">N° Carte: ${ specialist.carte }</p>
                                 </div>
                             </div>
 
@@ -50,47 +50,37 @@
                                     </h4>
                                     <div class="space-y-3">
                                         <div>
-                                            <label class="text-sm font-medium text-gray-600">Nom</label>
-                                            <p class="text-gray-800 font-medium">${generalist.nom}</p>
+                                            <label class="text-sm font-medium text-gray-600">Email</label>
+                                            <p class="text-gray-800 font-medium">${specialist.email}</p>
                                         </div>
                                         <div>
-                                            <label class="text-sm font-medium text-gray-600">Prénom</label>
-                                            <p class="text-gray-800 font-medium">${generalist.prenom}</p>
+                                            <label class="text-sm font-medium text-gray-600">Téléphone</label>
+                                            <p class="text-gray-800 font-medium">${specialist.telephone}</p>
                                         </div>
                                         <div>
                                             <label class="text-sm font-medium text-gray-600">Date de naissance</label>
-                                            <p class="text-gray-800 font-medium">${generalist.dateNaissance}</p>
+                                            <p class="text-gray-800 font-medium">${specialist.dateNaissance}</p>
                                         </div>
                                         <div>
-                                            <label class="text-sm font-medium text-gray-600">Numéro de carte</label>
-                                            <p class="text-gray-800 font-medium">${generalist.carte}</p>
+                                            <label class="text-sm font-medium text-gray-600">Rôle</label>
+                                            <span class="inline-block px-3 py-1 bg-red-200 text-red-900 rounded-full text-sm font-medium">
+                                                Speciliste
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Coordonnées -->
+                                <!-- Calendrier -->
                                 <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-100">
                                     <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
                                         <svg class="w-5 h-5 mr-2 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                                        </svg>
-                                        Coordonnées
+                                                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM5 8V6h14v2H5zm2 4h10v2H7v-2z"/>
+                                            </svg>
+                                        Calendrier
                                     </h4>
                                     <div class="space-y-3">
-                                        <div>
-                                            <label class="text-sm font-medium text-gray-600">Email</label>
-                                            <p class="text-gray-800 font-medium">${generalist.email}</p>
-                                        </div>
-                                        <div>
-                                            <label class="text-sm font-medium text-gray-600">Téléphone</label>
-                                            <p class="text-gray-800 font-medium">${generalist.telephone}</p>
-                                        </div>
-                                        <div>
-                                            <label class="text-sm font-medium text-gray-600">Rôle</label>
-                                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                                                Generalist
-                                            </span>
-                                        </div>
+
+
                                     </div>
                                 </div>
 
@@ -105,11 +95,11 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label class="text-sm font-medium text-gray-600">Date de création du compte</label>
-                                            <p class="text-gray-800 font-medium">${generalist.getCreatedAtFormatted()}</p>
+                                            <p class="text-gray-800 font-medium">${specialist.getCreatedAtFormatted()}</p>
                                         </div>
                                         <div>
                                             <label class="text-sm font-medium text-gray-600">Dernière mise à jour</label>
-                                            <p class="text-gray-800 font-medium">${generalist.getUpdatedAtFormatted()}</p>
+                                            <p class="text-gray-800 font-medium">${specialist.getUpdatedAtFormatted()}</p>
                                         </div>
                                     </div>
                                 </div>

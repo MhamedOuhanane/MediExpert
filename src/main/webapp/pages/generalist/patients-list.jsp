@@ -384,13 +384,20 @@
 
                 <div class="bg-gray-50 p-3 -mx-4 -mb-4 mt-6 border-t flex space-x-3">
                     <button type="button"
+                            formaction="${pageContext.request.contextPath}/consultations/add"
                             onclick="closeConsultationModal()"
                             class="flex-1 px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition text-sm">
                         Annuler
                     </button>
                     <button type="submit"
+                            formaction="${pageContext.request.contextPath}/consultations/demand"
                             class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
-                        Créer la consultation
+                        Demonde Avis
+                    </button>
+                    <button type="submit"
+                            formaction="${pageContext.request.contextPath}/consultations/add"
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
+                        Terminé
                     </button>
                 </div>
             </form>
