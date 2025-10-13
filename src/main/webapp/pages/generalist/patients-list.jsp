@@ -294,7 +294,7 @@
     <!-- Modal Nouvelle Consultation -->
     <div id="consultationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden transform transition-all animate-scale-in flex flex-col">
-            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-4">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center mr-3">
@@ -328,7 +328,7 @@
                            id="raison"
                            name="raison"
                            required
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
                            placeholder="Ex: Consultation de routine, Douleur abdominale...">
                 </div>
 
@@ -341,7 +341,7 @@
                               name="observations"
                               required
                               rows="4"
-                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm resize-none"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:ring-blue-500 focus:border-transparent outline-none transition text-sm resize-none"
                               placeholder="Notez vos observations médicales..."></textarea>
                 </div>
 
@@ -356,7 +356,7 @@
                            required
                            min="0"
                            step="0.01"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
                            placeholder="0.00">
                 </div>
 
@@ -368,7 +368,7 @@
                     <select id="actesTechniques"
                             name="actesTechniques"
                             multiple
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition text-sm"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2  focus:ring-blue-500 focus:border-transparent outline-none transition text-sm"
                             size="5">
                         <%
                         if (actesTechniques != null && !actesTechniques.isEmpty()) {
@@ -380,7 +380,6 @@
                         }
                         %>
                     </select>
-                    <p class="text-xs text-gray-500 mt-1">Maintenez Ctrl (Windows) ou Cmd (Mac) pour sélectionner plusieurs actes</p>
                 </div>
 
                 <div class="bg-gray-50 p-3 -mx-4 -mb-4 mt-6 border-t flex space-x-3">
@@ -390,7 +389,7 @@
                         Annuler
                     </button>
                     <button type="submit"
-                            class="flex-1 px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
                         Créer la consultation
                     </button>
                 </div>

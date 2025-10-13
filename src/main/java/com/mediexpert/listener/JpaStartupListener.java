@@ -42,6 +42,7 @@ public class JpaStartupListener implements ServletContextListener {
         GeneralisteRepository generalisteRepository = new GeneralisteRepositoryImpl();
         RecordRepository recordRepository = new RecordRepositoryImpl();
         ConsultationRepository consultationRepository = new ConsultationRepositoryImpl();
+        ActesTechniquesRepository actRepo = new ActesTechniquesRepositoryImpl();
 
         RoleService roleService = new RoleServiceImpl(roleRepository);
         UserService userService = new UserServiceImpl(userRepository, specialisteRepository);
@@ -51,6 +52,7 @@ public class JpaStartupListener implements ServletContextListener {
         InfirmierService infirmierService = new InfirmierServiceImpl(infirmierRepository);
         RecordService recordService = new RecordServiceImpl(recordRepository);
         ConsultationService consultationService = new ConsultationServiceImpl(consultationRepository);
+        ActesTechniquesService actService = new ActesTechniquesServiceImpl(actRepo);
 
         sce.getServletContext().setAttribute("userService", userService);
         sce.getServletContext().setAttribute("adminService", adminService);
@@ -60,6 +62,7 @@ public class JpaStartupListener implements ServletContextListener {
         sce.getServletContext().setAttribute("recordService", recordService);
         sce.getServletContext().setAttribute("consultationService", consultationService);
         sce.getServletContext().setAttribute("roleService", roleService);
+        sce.getServletContext().setAttribute("actService", actService);
 
     }
 

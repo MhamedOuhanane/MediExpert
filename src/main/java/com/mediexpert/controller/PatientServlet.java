@@ -4,6 +4,7 @@ import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Record;
 import com.mediexpert.model.User;
+import com.mediexpert.service.interfaces.ActesTechniquesService;
 import com.mediexpert.service.interfaces.RecordService;
 import com.mediexpert.util.CSRFUtil;
 import com.mediexpert.util.SESSIONUtil;
@@ -20,11 +21,12 @@ import java.util.UUID;
 @WebServlet("/patients/*")
 public class PatientServlet extends HttpServlet {
     private RecordService recordService;
-    private ActesTechniques recordService;
+    private ActesTechniquesService actServcie;
 
     @Override
     public void init() {
         this.recordService = (RecordService) getServletContext().getAttribute("recordService");
+        this.actServcie = (ActesTechniquesService) getServletContext().getAttribute("actService");
     }
 
     @Override
@@ -44,7 +46,10 @@ public class PatientServlet extends HttpServlet {
                 records = records.stream()
                         .filter(patient -> patient.getStatus().equals(StatusPatient.EN_ATTENTE))
                         .toList();
+
                 url = "/pages/generalist/patients-list.jsp";
+                var actesTechniques = actServcie.getAllActesTechniques();
+                req.setAttribute("actesTechniques", actesTechniques);
             }
             req.setAttribute("patients", records);
             req.setAttribute("currentRoute", "/patients");
