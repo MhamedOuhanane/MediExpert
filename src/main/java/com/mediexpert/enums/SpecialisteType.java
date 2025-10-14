@@ -1,6 +1,6 @@
 package com.mediexpert.enums;
 
-public enum SpecialisteType {
+public enum     SpecialisteType {
     CARDIOLOGIE("Cardiologie: Maladies du cœur et des vaisseaux sanguins (hypertension, insuffisance cardiaque, arythmie, infarctus)"),
     PNEUMOLOGIE("Pneumologie: Maladies respiratoires et pulmonaires"),
     NEUROLOGIE("Neurologie: Troubles du système nerveux"),

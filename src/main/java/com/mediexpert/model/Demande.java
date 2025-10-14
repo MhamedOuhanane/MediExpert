@@ -38,7 +38,7 @@ public class Demande {
     private Consultation consultation;
 
     @ManyToOne
-    @JoinColumn(name = "secialiste_id")
+    @JoinColumn(name = "specialiste_id")
     private Specialiste specialiste;
 
     @OneToMany(mappedBy = "demande", cascade = CascadeType.ALL)

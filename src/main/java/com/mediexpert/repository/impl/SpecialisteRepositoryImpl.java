@@ -35,7 +35,7 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
             Specialiste s = em.find(Specialiste.class, specialisteId);
             Hibernate.initialize(s.getCalendriers());
             Hibernate.initialize(s.getDemandes());
-            return Optional.of(s);
+            return Optional.ofNullable(s);
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche du spécialiste d'id '" + specialisteId + "':" + e.getMessage(), e);
         }

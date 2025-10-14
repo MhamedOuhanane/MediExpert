@@ -1,6 +1,7 @@
 package com.mediexpert.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mediexpert.enums.DemandeStatut;
 import com.mediexpert.model.Calendrier;
 import com.mediexpert.model.Demande;
 import com.mediexpert.model.Indisponible;
@@ -46,18 +47,22 @@ public class SpecialistServlet extends HttpServlet {
                 calMap.put("endTime", cal.getEndTime());
                 calMap.put("disponibilite", cal.getDisponibilite());
 
-                Map<String, Object> indisponibles = new HashMap<>();
+                List<Map<String, Object>> indisponibles = new ArrayList<>();
                 for (Indisponible indi : cal.getIndisponibles()) {
-                    indisponibles.put("startTime", indi.getStartTime());
-                    indisponibles.put("endTime", indi.getEndTime());
+                    Map<String, Object> indiMap = new HashMap<>();
+                    indiMap.put("startTime", indi.getStartTime());
+                    indiMap.put("endTime", indi.getEndTime());
+                    indisponibles.add(indiMap);
                 }
                 calMap.put("indisponibles", indisponibles);
 
-                Map<String, Object> reserves = new HashMap<>();
+                List<Map<String, Object>> reserves = new ArrayList<>();
                 for (Demande demand : specialiste.getDemandes()) {
-                    if (demand.getStartDate().toLocalDate().equals(cal.getDate())) {
-                        reserves.put("startTime", demand.getStartDate().toLocalTime());
-                        reserves.put("endTime", demand.getStartDate().toLocalTime().plusMinutes(30));
+                    if (!demand.getStatut().equals(DemandeStatut.ANNULEE) && demand.getStartDate().toLocalDate().equals(cal.getDate())) {
+                        Map<String, Object> reseMap = new HashMap<>();
+                        reseMap.put("startTime", demand.getStartDate().toLocalTime());
+                        reseMap.put("endTime", demand.getStartDate().toLocalTime().plusMinutes(30));
+                        reserves.add(reseMap);
                     }
                 }
                 calMap.put("reserves", reserves);

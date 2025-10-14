@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                                 <div class="ml-6">
-                                    <h3 class="text-2xl font-bold text-gray-800">M. ${specialist.nom} ${specialist.prenom} (${specialist.calendriers.size()})</h3>
+                                    <h3 class="text-2xl font-bold text-gray-800">M. ${specialist.nom} ${specialist.prenom}</h3>
                                     <p class="text-gray-500">N° Carte: <span class="text-gray-800"> ${ specialist.carte } </span> </p>
                                 </div>
                             </div>
@@ -99,11 +99,12 @@
                                                 </svg>
                                             Calendrier
                                         </h4>
-                                        <div class="flex justify-between items-center mb-4">
+                                        <div class="flex justify-between items-center mb-4 w-[50%]">
                                             <button onclick="previousWeek()" class="p-2 hover:bg-purple-200 rounded-lg transition">
                                                 ←
                                             </button>
-                                            <h5 id="weekRange" class="text-sm font-semibold text-gray-700"></h5>
+                                            <h5 id="weekRange"
+                                                class="text-sm font-semibold text-gray-700 w-[90%] truncate text-center"></h5>
                                             <button onclick="nextWeek()" class="p-2 hover:bg-purple-200 rounded-lg transition">
                                                 →
                                             </button>
@@ -132,6 +133,14 @@
                                             <span class="text-gray-500">Indisponible</span>
                                         </div>
                                         <div class="flex items-center gap-1">
+                                            <div class="w-3 h-3 bg-blue-300 rounded"></div>
+                                            <span class="text-gray-500">Terminé</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <div class="w-3 h-3 bg-yellow-200 rounded"></div>
+                                            <span class="text-gray-500">Passé</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
                                             <div class="w-3 h-3 bg-gray-300 rounded"></div>
                                             <span class="text-gray-500">Non défini</span>
                                         </div>
@@ -147,9 +156,9 @@
     </div>
 
     <script>
-        let currentWeekOffset = 0;
-
         const calendrierData = ${calendrierJson};
+        const role = 'specialist';
+        console.log(calendrierData);
     </script>
 
     <script src="${pageContext.request.contextPath}/js/specialist.js"></script>
