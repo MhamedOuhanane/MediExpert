@@ -24,17 +24,14 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
-                double prix = consultation.getPrix();
                 Record patient = em.find(Record.class, consultation.getRecord().getId());
                 consultation.setRecord(patient);
                 if (!consultation.getActesTechniques().isEmpty()) {
                     List<ActesTechniques> listActes = new ArrayList<>();
                     for (ActesTechniques act : consultation.getActesTechniques()) {
                         ActesTechniques actesTechniques = em.find(ActesTechniques.class, act.getId());
-                        prix += (actesTechniques.getPrix());
                         listActes.add(actesTechniques);
                     }
-                    consultation.setPrix(prix);
                     consultation.setActesTechniques(listActes);
                 }
                 em.persist(consultation);

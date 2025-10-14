@@ -59,7 +59,7 @@
                                         switch (consultation.getStatut()) {
                                             case EN_ATTENTE_AVIS_SPECIALISTE:
                                                 statusColor = "bg-blue-100 text-blue-800 border-blue-300";
-                                                statusLabel = "En Attente";
+                                                statusLabel = "En Attente Avis Specialiste";
                                                 break;
                                             case TERMINEE:
                                                 statusColor = "bg-green-100 text-green-800 border-green-300";
@@ -116,11 +116,11 @@
 
                                     <!-- Prix -->
                                     <td class="px-4 py-3 whitespace-nowrap">
-                                        <span class="text-sm font-semibold text-gray-900"><%= String.format("%.2f", consultation.getPrix()) %> DH</span>
+                                        <span class="text-sm font-semibold text-gray-900"><%= String.format("%.2f", consultation.getPrix() + totalActes) %> DH</span>
                                     </td>
 
                                     <!-- Statut -->
-                                    <td class="px-4 py-3 whitespace-nowrap">
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">
                                         <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border <%= statusColor %>">
                                             <%= statusLabel %>
                                         </span>

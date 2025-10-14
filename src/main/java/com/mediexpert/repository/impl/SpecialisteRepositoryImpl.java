@@ -5,6 +5,7 @@ import com.mediexpert.repository.interfaces.SpecialisteRepository;
 import com.mediexpert.util.DBUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import org.hibernate.Hibernate;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,10 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
     @Override
     public Optional<Specialiste> findSpecialiste(UUID specialisteId) {
         try (EntityManager em = DBUtil.getEntityManager()) {
-            return Optional.ofNullable(em.find(Specialiste.class, specialisteId));
+            Specialiste s = em.find(Specialiste.class, specialisteId);
+            Hibernate.initialize(s.getCalendriers());
+            Hibernate.initialize(s.getDemandes());
+            return Optional.of(s);
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche du spécialiste d'id '" + specialisteId + "':" + e.getMessage(), e);
         }

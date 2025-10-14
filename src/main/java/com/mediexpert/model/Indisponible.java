@@ -19,7 +19,7 @@ public class Indisponible {
     private LocalTime startTime;
 
     @Column(nullable = false)
-    private LocalTime endDate;
+    private LocalTime endTime;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -33,10 +33,10 @@ public class Indisponible {
 
     public Indisponible() {}
 
-    public Indisponible(UUID id, LocalTime startTime, LocalTime endDate, LocalDateTime createdAt, LocalDateTime updatedAt, Calendrier calendrier) {
+    public Indisponible(UUID id, LocalTime startTime, LocalTime endTime, LocalDateTime createdAt, LocalDateTime updatedAt, Calendrier calendrier) {
         this.id = id;
         this.startTime = startTime;
-        this.endDate = endDate;
+        this.endTime = endTime;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.calendrier = calendrier;
@@ -58,12 +58,12 @@ public class Indisponible {
         this.startTime = startTime;
     }
 
-    public LocalTime getEndDate() {
-        return endDate;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setEndDate(LocalTime endDate) {
-        this.endDate = endDate;
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public LocalDateTime getCreatedAt() {

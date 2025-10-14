@@ -1,5 +1,6 @@
 package com.mediexpert.service.impl;
 
+import com.mediexpert.enums.ConsultationStatut;
 import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Consultation;
@@ -29,7 +30,8 @@ public class ConsultationServiceImpl implements ConsultationService {
             if (patient == null || !patient.getStatus().equals(StatusPatient.EN_ATTENTE)) throw new IllegalArgumentException("Une consultation ne peut être effectuée pour un patient qui n'est pas sur la liste d'attente.");
             Consultation consultation1 = consultationRepository.insertConsultation(consultation);
             if (consultation1 != null) {
-                patient = recordService.updateStatus(consultation.getRecord().getId(), StatusPatient.EN_COURS);
+                StatusPatient status = consultation1.getStatut().equals(ConsultationStatut.TERMINEE) ? StatusPatient.TERMINEE : StatusPatient.EN_COURS;
+                patient = recordService.updateStatus(consultation.getRecord().getId(), status);
             }
             return consultation1;
         } catch (RuntimeException e) {

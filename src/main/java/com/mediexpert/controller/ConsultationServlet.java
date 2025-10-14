@@ -74,29 +74,29 @@ public class ConsultationServlet extends HttpServlet {
 
         String path = req.getPathInfo() != null ? req.getPathInfo() : "/";
         try {
-            if ("/add".equals(path)) {
-                Record record = new Record();
-                Consultation consultation = new Consultation();
 
-                consultation.setRecord(record);
-                record.setId(UUID.fromString(req.getParameter("recordId")));
-                consultation.setRaison(req.getParameter("raison"));
-                consultation.setObservations(req.getParameter("observations"));
-                consultation.setPrix(Double.parseDouble(req.getParameter("prix")));
-                consultation.setStatut(ConsultationStatut.TERMINEE);
-                List<ActesTechniques> listAct = new ArrayList<>();
-                String[] actsId = req.getParameterValues("actesTechniques");
-                for (String actId : actsId) {
-                    ActesTechniques actesTechniques = new ActesTechniques();
-                    actesTechniques.setId(UUID.fromString(actId));
-                    listAct.add(actesTechniques);
-                }
-                if (!listAct.isEmpty()) consultation.setActesTechniques(listAct);
-                Consultation consultation1 = consultationService.addConsultation(consultation);
-                req.getSession().setAttribute("successMessage", "Le consultation de patient de carte '" + consultation1.getRecord().getCarte() + "' a été ajouté avec succès !");
-                resp.sendRedirect(req.getContextPath() + "/patients");
-                return;
+            Record record = new Record();
+            Consultation consultation = new Consultation();
+
+            consultation.setRecord(record);
+            record.setId(UUID.fromString(req.getParameter("recordId")));
+            consultation.setRaison(req.getParameter("raison"));
+            consultation.setObservations(req.getParameter("observations"));
+            consultation.setPrix(Double.parseDouble(req.getParameter("prix")));
+            ConsultationStatut status = "/add".equals(path) ? ConsultationStatut.TERMINEE : ConsultationStatut.EN_ATTENTE_AVIS_SPECIALISTE;
+            consultation.setStatut(status);
+            List<ActesTechniques> listAct = new ArrayList<>();
+            String[] actsId = req.getParameterValues("actesTechniques");
+            for (String actId : actsId) {
+                ActesTechniques actesTechniques = new ActesTechniques();
+                actesTechniques.setId(UUID.fromString(actId));
+                listAct.add(actesTechniques);
             }
+            if (!listAct.isEmpty()) consultation.setActesTechniques(listAct);
+            Consultation consultation1 = consultationService.addConsultation(consultation);
+            req.getSession().setAttribute("successMessage", "Le consultation de patient de carte '" + consultation1.getRecord().getCarte() + "' a été ajouté avec succès !");
+            resp.sendRedirect(req.getContextPath() + "/patients");
+            return;
         } catch (Exception e) {
             req.getSession().setAttribute("errorMessage", e.getMessage());
             resp.sendRedirect(req.getContextPath() + "/patients");

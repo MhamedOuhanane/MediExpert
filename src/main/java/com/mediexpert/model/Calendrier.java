@@ -40,7 +40,7 @@ public class Calendrier {
     @JoinColumn(name = "specialiste_id")
     private Specialiste specialiste;
 
-    @OneToMany(mappedBy = "calendrier", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "calendrier", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Indisponible> indisponibles = new ArrayList<>();
 
     public Calendrier() {}
