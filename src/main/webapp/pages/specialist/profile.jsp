@@ -156,7 +156,7 @@
     </div>
 
     <script>
-        const calendrierData = ${calendrierJson};
+        let calendrierData = ${calendrierJson};
         const role = 'specialist';
         console.log(calendrierData);
     </script>

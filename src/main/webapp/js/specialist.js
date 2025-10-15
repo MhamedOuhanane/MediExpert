@@ -18,22 +18,17 @@ function formatDateDisplay(date) {
     return new Intl.DateTimeFormat('fr-FR', options).format(date);
 }
 
-function tagExpired(cal, slotDiv) {
-    const calDate = cal.date;
-    const calEndTime = cal.endTime;
-
-    const endDateTime = new Date(
-            calDate[0],
-            calDate[1] - 1,
-            calDate[2],
-            calEndTime[0],
-            calEndTime[1]
-        );
-    const today = new Date();
-    const isPasse = endDateTime < today;
-    if(isPasse) {
-        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-100 text-white';
-    }
+function tagExpired(slotDate, slotTime, slotDiv) {
+    const [hours, minutes] = slotTime.split(':').map(Number);
+    const slotDateTime = new Date(
+        slotDate.getFullYear(),
+        slotDate.getMonth(),
+        slotDate.getDate(),
+        hours,
+        minutes + 30
+    );
+    const now = new Date();
+    return slotDateTime < now;
 }
 
 const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
@@ -91,7 +86,7 @@ function renderWeekCalendar() {
                 const slotDiv = document.createElement('div');
                 slotDiv.className = 'border border-gray-400 flex items-center justify-center text-xs cursor-pointer bg-gray-300';
                 const slotTime = `${String(h).padStart(2,'0')}:${half === 0 ? '00' : '30'}`; //important
-                const slotDate = const slotDateTime = new Date( monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex); //important
+                const slotDate = new Date( monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex); //important
 
                 const slotDateTime = new Date(
                     monday.getFullYear(),
@@ -120,13 +115,24 @@ function renderWeekCalendar() {
                         slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-green-100';
                         if (role === 'specialist') {
                             slotDiv.classList.add('hover:bg-green-300');
+                            const indispo = calData.indisponibles.find(ind =>
+                                slotTime >= ind.startTime && slotTime < ind.endTime
+                            );
+
+                            slotDiv.onclick = () => {
+                                fetchIndisponibilite({
+                                    startTime: slotTime,
+                                    calendrier_id: calData.id,
+                                    _methode: "POST"
+                                }, slotDiv);
+                            };
                         } else if (role === 'generalist') {
                             slotDiv.classList.add('cursor-not-allowed', 'pointer-events-none');
                         }
                     }
                 }
-                if(calData) {
-                    tagExpired(calData, slotDiv);
+                if(calData && tagExpired(slotDate, slotTime, slotDiv)) {
+                    slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-100 text-white';
                 }
 
                 if(calData && calData.indisponibles) {
@@ -134,11 +140,21 @@ function renderWeekCalendar() {
                         slotTime >= ind.startTime && slotTime < ind.endTime
                     );
                     if(isIndispo) {
-                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-red-500 text-white';
+                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-red-400 text-white';
                         if (role === 'generalist') {
                             slotDiv.classList.add('cursor-not-allowed', 'pointer-events-none');
-                        } else if (role === 'generalist') {
+                        } else if (role === 'specialist') {
+                            const indispo = calData.indisponibles.find(ind =>
+                                slotTime >= ind.startTime && slotTime < ind.endTime
+                            );
 
+                            slotDiv.onclick = () => {
+                                fetchIndisponibilite({
+                                    id: indispo.id,
+                                    calendrier_id: calData.id,
+                                    _methode: "DELETE"
+                                }, slotDiv);
+                            };
                         }
                     }
 
@@ -148,13 +164,24 @@ function renderWeekCalendar() {
                         slotTime >= ind.startTime && slotTime < ind.endTime
                     );
                     if(isReserve) {
-                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-orange-500 text-white';
+                        const isTermine = calData.reserves.some(ind =>
+                            ind.status === "TERMINEE"
+                        );
+                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer text-white';
+                        if (isTermine) {
+                            slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed', 'pointer-events-none');
+                        } else {
+                            if (role === 'generalist') {
+
+                            }
+                        }
                         if (role === 'specialist') {
                             slotDiv.classList.add('cursor-not-allowed', 'pointer-events-none');
-                        } else if (role === 'generalist') {
-
                         }
                     }
+                }
+                if(calData && tagExpired(slotDate, slotTime, slotDiv)) {
+                    slotDiv.classList.add('cursor-not-allowed');
                 }
                 calendarGrid.appendChild(slotDiv);
             }
@@ -172,8 +199,55 @@ function nextWeek() {
     renderWeekCalendar();
 }
 
-function fetchIndisponibilite(calId, indiId, _methode, startTime) {
-    const data =
+function fetchIndisponibilite(data, slotDiv) {
+    const url = data._methode === 'POST'
+        ? '/indisponibles'
+        : `/indisponibles/${data.id}`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.text().then(text => {
+                console.error('Erreur serveur:', res.status, text);
+                throw new Error('Erreur serveur');
+            });
+        }
+        return res.json();
+    })
+    .then(result => {
+        console.log('Réponse serveur:', result);
+
+        if (data._methode === 'DELETE' && result.deleted === true) {
+            const cal = calendrierData.find(c => c.id === data.calendrier_id);
+            if (cal && Array.isArray(cal.indisponibles)) {
+                cal.indisponibles = cal.indisponibles.filter(ind => ind.id !== data.id);
+            }
+        }
+
+        if (data._methode === 'POST' && result.id) {
+            const cal = calendrierData.find(c => c.id === result.calendrierId);
+            if (cal) {
+                if (!Array.isArray(cal.indisponibles)) cal.indisponibles = [];
+                cal.indisponibles.push({
+                    id: result.id,
+                    startTime: result.startTime,
+                    endTime: result.endTime
+                });
+            }
+        }
+
+        renderWeekCalendar();
+    })
+    .catch(err => {
+        console.error('❌ Erreur:', err);
+    });
 }
+
 
 document.addEventListener('DOMContentLoaded', renderWeekCalendar);

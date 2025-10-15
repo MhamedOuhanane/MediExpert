@@ -42,6 +42,7 @@ public class SpecialistServlet extends HttpServlet {
         if (specialiste != null) {
             for (Calendrier cal : specialiste.getCalendriers()) {
                 Map<String, Object> calMap = new HashMap<>();
+                calMap.put("id", cal.getId());
                 calMap.put("date", cal.getDate());
                 calMap.put("startTime", cal.getStartTime());
                 calMap.put("endTime", cal.getEndTime());
@@ -50,6 +51,7 @@ public class SpecialistServlet extends HttpServlet {
                 List<Map<String, Object>> indisponibles = new ArrayList<>();
                 for (Indisponible indi : cal.getIndisponibles()) {
                     Map<String, Object> indiMap = new HashMap<>();
+                    indiMap.put("id", indi.getId());
                     indiMap.put("startTime", indi.getStartTime());
                     indiMap.put("endTime", indi.getEndTime());
                     indisponibles.add(indiMap);
@@ -62,6 +64,7 @@ public class SpecialistServlet extends HttpServlet {
                         Map<String, Object> reseMap = new HashMap<>();
                         reseMap.put("startTime", demand.getStartDate().toLocalTime());
                         reseMap.put("endTime", demand.getStartDate().toLocalTime().plusMinutes(30));
+                        reseMap.put("status", demand.getStatut());
                         reserves.add(reseMap);
                     }
                 }
