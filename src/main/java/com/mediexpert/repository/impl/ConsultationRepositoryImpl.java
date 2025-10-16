@@ -56,7 +56,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
     @Override
     public List<Consultation> selectConsultation() {
         try (EntityManager em = DBUtil.getEntityManager()) {
-            return em.createQuery("SELECT c From Consultation c LEFT JOIN FETCH c.actesTechniques", Consultation.class).getResultList();
+            return em.createQuery("SELECT DISTINCT c From Consultation c LEFT JOIN FETCH c.actesTechniques", Consultation.class).getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la selection des consultations " + e.getMessage(), e);
         }

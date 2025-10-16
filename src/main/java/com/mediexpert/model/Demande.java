@@ -28,12 +28,15 @@ public class Demande {
     private LocalDateTime startDate;
 
     @Column(nullable = false)
+    private double  prix;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "consultation_id")
     private Consultation consultation;
 
@@ -46,12 +49,13 @@ public class Demande {
 
     public Demande(){}
 
-    public Demande(UUID id, String question, String response, DemandeStatut statut, LocalDateTime startDate, LocalDateTime createdAt, LocalDateTime updatedAt, Consultation consultation, Specialiste specialiste, List<Notification> notifications) {
+    public Demande(UUID id, String question, String response, DemandeStatut statut, LocalDateTime startDate, double  prix, LocalDateTime createdAt, LocalDateTime updatedAt, Consultation consultation, Specialiste specialiste, List<Notification> notifications) {
         this.id = id;
         this.question = question;
         this.response = response;
         this.statut = statut;
         this.startDate = startDate;
+        this.prix = prix;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.consultation = consultation;
@@ -69,6 +73,14 @@ public class Demande {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public double  getPrix() {
+        return prix;
+    }
+
+    public void setPrix(double  prix) {
+        this.prix = prix;
     }
 
     public String getQuestion() {

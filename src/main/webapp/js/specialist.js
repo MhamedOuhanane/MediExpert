@@ -89,6 +89,14 @@ function renderWeekCalendar() {
             for (let half = 0; half < 60; half += slotMinutes) {
                 const slotDiv = document.createElement('div');
                 const slotTime = `${String(h).padStart(2, '0')}:${half === 0 ? '00' : '30'}`;
+                let endHourSlot = h;
+                let endMinutes = half + slotMinutes;
+                if (endMinutes >= 60) {
+                    endMinutes = 0;
+                    endHourSlot += 1;
+                }
+                const slotEnd = `${String(endHourSlot).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
+
                 const slotDate = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex);
 
                 slotDiv.className = 'border border-gray-400 flex items-center justify-center text-xs bg-gray-300';
@@ -160,7 +168,7 @@ function renderWeekCalendar() {
                 if (isExpired) {
                     slotDiv.classList.add('cursor-not-allowed');
                 }
-                slotDiv.title = `time: ${slotTime}`;
+                slotDiv.title = `${slotTime} - ${slotEnd}`;
 
                 calendarGrid.appendChild(slotDiv);
             }

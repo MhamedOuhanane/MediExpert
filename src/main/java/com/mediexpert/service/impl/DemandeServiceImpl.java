@@ -1,8 +1,6 @@
 package com.mediexpert.service.impl;
 
-import com.mediexpert.enums.StatusPatient;
 import com.mediexpert.model.Demande;
-import com.mediexpert.model.Record;
 import com.mediexpert.model.Specialiste;
 import com.mediexpert.repository.interfaces.DemandeRepository;
 import com.mediexpert.service.interfaces.DemandeService;

@@ -23,23 +23,13 @@
             <span>Mon Profil</span>
         </a>
 
-
         <a href="/demandes"
           class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg transition duration-200
           <%= currentRoute.equals("/demandes") ? "bg-white bg-opacity-20" : "hover:bg-white hover:bg-opacity-20" %>">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              <path d="M4 4h10v2H6v12h12V8h2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2zM20 2h-6v4h2V4h4V2zM9.3 12.3l1.4 1.4L16 8.4 14.6 7 9.3 12.3z"/>
             </svg>
-            <span>Liste des Patients</span>
-        </a>
-
-        <a href="/consultations"
-           class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg transition duration-200
-           <%= currentRoute.equals("/consultations") ? "bg-white bg-opacity-20" : "hover:bg-white hover:bg-opacity-20" %>">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-8h8v2H8v-2zm0 4h8v2H8v-2zm0-8h5v2H8V8z"/>
-            </svg>
-            <span>Liste des Consultations</span>
+            <span>Demandes d'Avis</span>
         </a>
     </nav>
 

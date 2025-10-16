@@ -62,7 +62,7 @@ public class DemandeRepositoryImpl implements DemandeRepository {
     @Override
     public List<Demande> selectSpecialistDemand(Specialiste specialiste) {
         try (EntityManager em = DBUtil.getEntityManager()) {
-            return em.createQuery("SELECT d FROM Demande d LEFT JOIN FETCH d.consultation", Demande.class)
+            return em.createQuery("SELECT d FROM Demande d LEFT JOIN FETCH d.consultation c LEFT JOIN FETCH c.actesTechniques", Demande.class)
                     .getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la sélection des demandes: " + e.getMessage(), e);

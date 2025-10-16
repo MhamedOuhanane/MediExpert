@@ -40,10 +40,10 @@ public class Consultation {
     @JoinColumn(name = "record_id")
     private Record record;
 
-    @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL)
-    private List<Demande> demandes = new ArrayList<>();
+    @OneToOne(mappedBy = "consultation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Demande demande;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "actes_techniques_consultation",
             joinColumns = @JoinColumn(name = "consultation_id"),
@@ -53,7 +53,7 @@ public class Consultation {
 
     public Consultation() {}
 
-    public Consultation(UUID id, String raison, String observations, double prix, ConsultationStatut statut, LocalDateTime createdAt, LocalDateTime updatedAt, Record record, List<Demande> demandes, List<ActesTechniques> actesTechniques) {
+    public Consultation(UUID id, String raison, String observations, double prix, ConsultationStatut statut, LocalDateTime createdAt, LocalDateTime updatedAt, Record record, Demande demande, List<ActesTechniques> actesTechniques) {
         this.id = id;
         this.raison = raison;
         this.observations = observations;
@@ -62,7 +62,7 @@ public class Consultation {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.record = record;
-        this.demandes = demandes;
+        this.demande = demande;
         this.actesTechniques = actesTechniques;
     }
 
@@ -133,12 +133,12 @@ public class Consultation {
         this.record = record;
     }
 
-    public List<Demande> getDemandes() {
-        return demandes;
+    public Demande getDemandes() {
+        return demande;
     }
 
-    public void setDemandes(List<Demande> demandes) {
-        this.demandes = demandes;
+    public void setDemandes(Demande demande) {
+        this.demande = demande;
     }
 
     public List<ActesTechniques> getActesTechniques() {
