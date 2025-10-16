@@ -1,8 +1,12 @@
 package com.mediexpert.service.impl;
 
+import com.mediexpert.enums.ConsultationStatut;
+import com.mediexpert.enums.DemandeStatut;
+import com.mediexpert.model.Consultation;
 import com.mediexpert.model.Demande;
 import com.mediexpert.model.Specialiste;
 import com.mediexpert.repository.interfaces.DemandeRepository;
+import com.mediexpert.service.interfaces.ConsultationService;
 import com.mediexpert.service.interfaces.DemandeService;
 
 import java.util.List;
@@ -10,9 +14,11 @@ import java.util.UUID;
 
 public class DemandeServiceImpl implements DemandeService {
     private final DemandeRepository demandeRepository;
+    private final ConsultationService consultationService;
 
-    public DemandeServiceImpl(DemandeRepository demandeRepository) {
+    public DemandeServiceImpl(DemandeRepository demandeRepository, ConsultationService consultationService) {
         this.demandeRepository = demandeRepository;
+        this.consultationService = consultationService;
     }
 
     @Override
@@ -42,8 +48,27 @@ public class DemandeServiceImpl implements DemandeService {
 
     @Override
     public Demande updateDemande(Demande demande) {
-        if (demande == null) throw new IllegalArgumentException("Le patient ne peut pas être null.");
+        if (demande == null) throw new IllegalArgumentException("Le demande ne peut pas être null.");
         return demandeRepository.update(demande);
+    }
+
+    @Override
+    public Demande responseDemand(UUID uuid, String response, DemandeStatut statut) {
+        if (uuid == null) throw new IllegalArgumentException("Le demande ne peut pas être null.");
+        if (response == null) throw new IllegalArgumentException("Le response ne peut pas être null.");
+        try {
+            Demande demande = findDemandeById(uuid);
+            demande.setResponse(response);
+            demande.setStatut(statut);
+            Demande demande1 = this.demandeRepository.update(demande);
+            if (demande1 != null && demande1.getConsultation() != null) {
+                demande1.getConsultation().setStatut(ConsultationStatut.TERMINEE);
+                Consultation consultation = consultationService.updateConsultation(demande1.getConsultation());
+            }
+            return demande1;
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     private int getStatusOrder(String status) {

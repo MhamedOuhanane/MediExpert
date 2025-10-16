@@ -1,5 +1,6 @@
 package com.mediexpert.service.interfaces;
 
+import com.mediexpert.enums.DemandeStatut;
 import com.mediexpert.model.Demande;
 import com.mediexpert.model.Specialiste;
 
@@ -11,4 +12,5 @@ public interface DemandeService {
     Demande findDemandeById(UUID demandeId);
     List<Demande> getSpecDemande(Specialiste specialiste);
     Demande updateDemande(Demande demande);
+    Demande responseDemand(UUID uuid, String response, DemandeStatut statut);
 }

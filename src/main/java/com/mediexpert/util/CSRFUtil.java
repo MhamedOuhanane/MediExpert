@@ -26,6 +26,6 @@ public class CSRFUtil {
     public static boolean validationToken(HttpServletRequest request) {
         String sessionToken = getCsrfToken(request.getSession(false));
         String formToken = request.getParameter(CSRF_TOKEN);
-            return sessionToken != null && sessionToken.equals(formToken);
+        return sessionToken != null && sessionToken.equals(formToken);
     }
 }

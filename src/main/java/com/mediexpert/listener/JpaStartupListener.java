@@ -56,7 +56,7 @@ public class JpaStartupListener implements ServletContextListener {
         ActesTechniquesService actService = new ActesTechniquesServiceImpl(actRepo);
         ConsultationService consultationService = new ConsultationServiceImpl(consultationRepository, recordService);
         IndisponibleService indisponibleService = new IndisponibleServiceImpl(indisponibleRepository);
-        DemandeService demandeService = new DemandeServiceImpl(demandeRepository);
+        DemandeService demandeService = new DemandeServiceImpl(demandeRepository, consultationService);
 
         sce.getServletContext().setAttribute("userService", userService);
         sce.getServletContext().setAttribute("adminService", adminService);

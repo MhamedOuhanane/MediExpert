@@ -76,7 +76,7 @@ public class RecordServiceImpl implements RecordService {
         if (status == null) throw new IllegalArgumentException("La nouvelle status de patient ne peut pas être null.");
         try {
             Record patient = this.findRecordById(id);
-            if (patient.getStatus() != StatusPatient.EN_ATTENTE) throw new RuntimeException("Vous ne devez pas annuler le traitement d’un patient qui suit un consultation.");
+            if (patient.getStatus() != StatusPatient.EN_ATTENTE && status.equals(StatusPatient.ANNULEE)) throw new RuntimeException("Vous ne devez pas annuler le traitement d’un patient qui suit un consultation.");
             patient.setStatus(status);
             return recordRepository.updateRecord(patient);
         } catch (RuntimeException e) {

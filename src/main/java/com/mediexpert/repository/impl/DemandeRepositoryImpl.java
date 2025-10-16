@@ -68,4 +68,5 @@ public class DemandeRepositoryImpl implements DemandeRepository {
             throw new RuntimeException("Erreur lors de la sélection des demandes: " + e.getMessage(), e);
         }
     }
+
 }
