@@ -33,7 +33,16 @@ public class SpecialistServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Specialiste specialiste = (Specialiste) SESSIONUtil.getUser(req);
-        req.setAttribute("specialist", specialiste);
+        try {
+            if (specialiste != null) {
+                specialiste = specialisteService.findSpecialiste(specialiste.getId());
+                SESSIONUtil.setUser(req, specialiste);
+            }
+        } catch (RuntimeException e) {
+            req.setAttribute("errorMessage", e.getMessage());
+            req.getRequestDispatcher(req.getContextPath() + "/login.jsp").forward(req, resp);
+            return;
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
@@ -75,6 +84,7 @@ public class SpecialistServlet extends HttpServlet {
 
         String calendrierJson = mapper.writeValueAsString(calendrierList);
         req.setAttribute("calendrierJson", calendrierJson);
+        req.setAttribute("specialist", specialiste);
         req.setAttribute("currentRoute", "/specialist");
         req.getRequestDispatcher("pages/specialist/profile.jsp").forward(req, resp);
     }

@@ -76,17 +76,24 @@ public class IndisponibleServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String pathInfo = req.getPathInfo();
-        if (pathInfo == null || pathInfo.equals("/")) {
+        try {
+            String pathInfo = req.getPathInfo();
+            if (pathInfo == null || pathInfo.equals("/")) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write("{\"error\": \"ID est vide\"}");
+                return;
+            }
+            UUID id = UUID.fromString(pathInfo.substring(1));
+            System.out.println(id);
+
+            boolean deleted = indisponibleService.deleteIndisponible(id);
+
+            resp.setContentType("application/json");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.getWriter().write("{\"deleted\": " + deleted + "}");
+        } catch (RuntimeException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"ID est vide\"}");
-            return;
+            resp.getWriter().write("{\"deleted\": " + false + "}");
         }
-        UUID id = UUID.fromString(pathInfo.substring(1));
-
-        boolean deleted = indisponibleService.deleteIndisponible(id);
-
-        resp.setContentType("application/json");
-        resp.getWriter().write("{\"deleted\": " + deleted + "}");
     }
 }

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "indisponibles")
-public class Indisponible {
+public class   Indisponible {
 
     @Id
     @GeneratedValue

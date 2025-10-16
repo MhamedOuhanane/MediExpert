@@ -18,7 +18,12 @@ function formatDateDisplay(date) {
     return new Intl.DateTimeFormat('fr-FR', options).format(date);
 }
 
-function tagExpired(slotDate, slotTime, slotDiv) {
+function timeArrayToString(timeArray) {
+    if (!timeArray || timeArray.length < 2) return null;
+    return `${String(timeArray[0]).padStart(2, '0')}:${String(timeArray[1]).padStart(2, '0')}`;
+}
+
+function tagExpired(slotDate, slotTime) {
     const [hours, minutes] = slotTime.split(':').map(Number);
     const slotDateTime = new Date(
         slotDate.getFullYear(),
@@ -46,7 +51,7 @@ function renderWeekCalendar() {
     sunday.setDate(sunday.getDate() + 6);
 
     const calendrierDataFiltrer = calendrierData.filter(cal => {
-        const calDate = new Date(cal.date[0], cal.date[1] - 1, cal.date[2])
+        const calDate = new Date(cal.date[0], cal.date[1] - 1, cal.date[2]);
         return calDate >= monday && calDate <= sunday;
     });
 
@@ -75,7 +80,6 @@ function renderWeekCalendar() {
     }
 
     dayNames.forEach((dayName, dayIndex) => {
-
         const dayCell = document.createElement('div');
         dayCell.className = 'border border-gray-300 bg-gray-100 font-bold flex items-center justify-center';
         dayCell.textContent = dayName;
@@ -84,105 +88,76 @@ function renderWeekCalendar() {
         for (let h = startHour; h < endHour; h++) {
             for (let half = 0; half < 60; half += slotMinutes) {
                 const slotDiv = document.createElement('div');
-                slotDiv.className = 'border border-gray-400 flex items-center justify-center text-xs cursor-pointer bg-gray-300';
-                const slotTime = `${String(h).padStart(2,'0')}:${half === 0 ? '00' : '30'}`; //important
-                const slotDate = new Date( monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex); //important
+                const slotTime = `${String(h).padStart(2, '0')}:${half === 0 ? '00' : '30'}`;
+                const slotDate = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex);
 
-                const slotDateTime = new Date(
-                    monday.getFullYear(),
-                    monday.getMonth(),
-                    monday.getDate() + dayIndex,
-                    h,
-                    half
-                );
-                const now = new Date();
-                if (slotDateTime < now) {
-                    slotDiv.classList.add('cursor-not-allowed');
-                }
-
-                if (role === 'specialist') {
-
-                }
+                slotDiv.className = 'border border-gray-400 flex items-center justify-center text-xs bg-gray-300';
+                slotDiv.classList.add(role === 'specialist' ? 'cursor-pointer' : '');
 
                 const calData = calendrierDataFiltrer[dayIndex];
-                if(calData) {
-                    const startTimeStr = `${String(calData.startTime[0]).padStart(2,'0')}:${String(calData.startTime[1]).padStart(2,'0')}`;
-                    const endTimeStr = `${String(calData.endTime[0]).padStart(2,'0')}:${String(calData.endTime[1]).padStart(2,'0')}`;
 
+                const isExpired = tagExpired(slotDate, slotTime);
+
+                if (calData) {
+                    const startTimeStr = timeArrayToString(calData.startTime);
+                    const endTimeStr = timeArrayToString(calData.endTime);
                     const isTravail = slotTime >= startTimeStr && slotTime < endTimeStr;
 
-                    if(isTravail) {
-                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-green-100';
-                        if (role === 'specialist') {
-                            slotDiv.classList.add('hover:bg-green-300');
-                            const indispo = calData.indisponibles.find(ind =>
-                                slotTime >= ind.startTime && slotTime < ind.endTime
-                            );
-
-                            slotDiv.onclick = () => {
-                                fetchIndisponibilite({
-                                    startTime: slotTime,
-                                    calendrier_id: calData.id,
-                                    _methode: "POST"
-                                }, slotDiv);
-                            };
-                        } else if (role === 'generalist') {
-                            slotDiv.classList.add('cursor-not-allowed', 'pointer-events-none');
-                        }
-                    }
-                }
-                if(calData && tagExpired(slotDate, slotTime, slotDiv)) {
-                    slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-100 text-white';
-                }
-
-                if(calData && calData.indisponibles) {
-                    const isIndispo = calData.indisponibles.some(ind =>
-                        slotTime >= ind.startTime && slotTime < ind.endTime
-                    );
-                    if(isIndispo) {
-                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-red-400 text-white';
-                        if (role === 'generalist') {
-                            slotDiv.classList.add('cursor-not-allowed', 'pointer-events-none');
-                        } else if (role === 'specialist') {
-                            const indispo = calData.indisponibles.find(ind =>
-                                slotTime >= ind.startTime && slotTime < ind.endTime
-                            );
-
-                            slotDiv.onclick = () => {
-                                fetchIndisponibilite({
-                                    id: indispo.id,
-                                    calendrier_id: calData.id,
-                                    _methode: "DELETE"
-                                }, slotDiv);
-                            };
-                        }
-                    }
-
-                }
-                if(calData && calData.reserves) {
-                    const isReserve = calData.reserves.some(ind =>
-                        slotTime >= ind.startTime && slotTime < ind.endTime
-                    );
-                    if(isReserve) {
-                        const isTermine = calData.reserves.some(ind =>
-                            ind.status === "TERMINEE"
+                    if (isTravail) {
+                        const reserve = calData.reserves?.find(res =>
+                            timeArrayToString(res.startTime) <= slotTime &&
+                            slotTime < timeArrayToString(res.endTime)
                         );
-                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer text-white';
-                        if (isTermine) {
-                            slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed', 'pointer-events-none');
-                        } else {
-                            if (role === 'generalist') {
 
+                        if (reserve) {
+                            slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs text-white';
+                            if (reserve.status === "TERMINEE") {
+                                slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed', 'pointer-events-none');
+                            } else {
+                                slotDiv.classList.add('bg-orange-300', 'cursor-not-allowed', 'pointer-events-none');
+                            }
+                        } else {
+                            const indispo = calData.indisponibles?.find(ind =>
+                                timeArrayToString(ind.startTime) <= slotTime &&
+                                slotTime < timeArrayToString(ind.endTime)
+                            );
+
+                            if (indispo) {
+                                slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs bg-red-400 text-white';
+
+                                if (isExpired) {
+                                    slotDiv.classList.add('cursor-not-allowed');
+                                } else if (role === 'specialist') {
+                                    slotDiv.classList.add('cursor-pointer', 'hover:bg-red-500');
+                                    slotDiv.onclick = () => {
+                                        fetchIndisponibilite({
+                                            id: indispo.id,
+                                            calendrier_id: calData.id,
+                                            _methode: "DELETE"
+                                        }, slotDiv);
+                                    };
+                                }
+                            } else {
+                                if (isExpired) {
+                                    slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-200';
+                                } else {
+                                    slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-green-400';
+                                    if (role === 'specialist') {
+                                        slotDiv.classList.add('hover:bg-green-500');
+                                        slotDiv.onclick = () => {
+                                            fetchIndisponibilite({
+                                                startTime: slotTime,
+                                                calendrier_id: calData.id,
+                                                _methode: "POST"
+                                            }, slotDiv);
+                                        };
+                                    }
+                                }
                             }
                         }
-                        if (role === 'specialist') {
-                            slotDiv.classList.add('cursor-not-allowed', 'pointer-events-none');
-                        }
                     }
                 }
-                if(calData && tagExpired(slotDate, slotTime, slotDiv)) {
-                    slotDiv.classList.add('cursor-not-allowed');
-                }
+
                 calendarGrid.appendChild(slotDiv);
             }
         }
@@ -199,7 +174,17 @@ function nextWeek() {
     renderWeekCalendar();
 }
 
+let isProcessing = false;
+
 function fetchIndisponibilite(data, slotDiv) {
+    if (isProcessing) {
+        return;
+    }
+
+    isProcessing = true;
+    slotDiv.style.opacity = '0.5';
+    slotDiv.style.pointerEvents = 'none';
+
     const url = data._methode === 'POST'
         ? '/indisponibles'
         : `/indisponibles/${data.id}`;
@@ -215,7 +200,7 @@ function fetchIndisponibilite(data, slotDiv) {
         if (!res.ok) {
             return res.text().then(text => {
                 console.error('Erreur serveur:', res.status, text);
-                throw new Error('Erreur serveur');
+                throw new Error(`Erreur ${res.status}: ${text}`);
             });
         }
         return res.json();
@@ -227,6 +212,7 @@ function fetchIndisponibilite(data, slotDiv) {
             const cal = calendrierData.find(c => c.id === data.calendrier_id);
             if (cal && Array.isArray(cal.indisponibles)) {
                 cal.indisponibles = cal.indisponibles.filter(ind => ind.id !== data.id);
+                console.log('Indisponibilité supprimée:', data.id);
             }
         }
 
@@ -234,20 +220,36 @@ function fetchIndisponibilite(data, slotDiv) {
             const cal = calendrierData.find(c => c.id === result.calendrierId);
             if (cal) {
                 if (!Array.isArray(cal.indisponibles)) cal.indisponibles = [];
-                cal.indisponibles.push({
-                    id: result.id,
-                    startTime: result.startTime,
-                    endTime: result.endTime
-                });
+
+                const exists = cal.indisponibles.some(ind => ind.id === result.id);
+                if (!exists) {
+                    const [h, m] = result.startTime.split(':').map(Number);
+                    const [eh, em] = result.endTime.split(':').map(Number);
+
+                    cal.indisponibles.push({
+                        id: result.id,
+                        startTime: [h, m],
+                        endTime: [eh, em]
+                    });
+                    console.log('Indisponibilité ajoutée:', result.id);
+                } else {
+                    console.log('ℹIndisponibilité déjà existante:', result.id);
+                }
             }
         }
 
         renderWeekCalendar();
     })
     .catch(err => {
-        console.error('❌ Erreur:', err);
+        console.error('Erreur lors de la requête:', err);
+        slotDiv.style.opacity = '1';
+        slotDiv.style.pointerEvents = 'auto';
+    })
+    .finally(() => {
+        setTimeout(() => {
+            isProcessing = false;
+        }, 300);
     });
 }
-
 
 document.addEventListener('DOMContentLoaded', renderWeekCalendar);

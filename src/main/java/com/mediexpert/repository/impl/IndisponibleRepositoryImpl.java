@@ -45,12 +45,33 @@ public class IndisponibleRepositoryImpl implements IndisponibleRepository {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
-                Indisponible indisponible1 = em.contains(indisponible) ? indisponible : em.merge(indisponible);
+
+                Indisponible indisponible1 = em.contains(indisponible)
+                        ? indisponible
+                        : em.find(Indisponible.class, indisponible.getId());
+
+                if (indisponible1 == null) {
+                    tx.rollback();
+                    return false;
+                }
+
+                if (indisponible1.getCalendrier() != null) {
+                    Calendrier calendrier = indisponible1.getCalendrier();
+                    calendrier = em.merge(calendrier);
+                    if (calendrier.getIndisponibles() != null) {
+                        calendrier.getIndisponibles().remove(indisponible1);
+                    }
+                    indisponible1.setCalendrier(null);
+                }
+
                 em.remove(indisponible1);
                 tx.commit();
                 return true;
+
             } catch (Exception e) {
-                if (tx.isActive()) tx.rollback();
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
                 throw new RuntimeException("Erreur lors de la suppression d'indisponibilite: " + e.getMessage(), e);
             }
         }
