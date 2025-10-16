@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Specialiste extends User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SpecialisteType specialite;
+    private SpecialisteType specialisteType;
 
     @Column(nullable = false)
     private Double tarif;
@@ -27,20 +27,20 @@ public class Specialiste extends User {
 
     public Specialiste() {}
 
-    public Specialiste(UUID id, String nom, String prenom, String email, String password, String carte, LocalDate dateNaissance, String telephone, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, SpecialisteType specialite, Double tarif, List<Demande> demandes, List<Calendrier> calendriers) {
+    public Specialiste(UUID id, String nom, String prenom, String email, String password, String carte, LocalDate dateNaissance, String telephone, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, SpecialisteType specialiteType, Double tarif, List<Demande> demandes, List<Calendrier> calendriers) {
         super(id, nom, prenom, email, password, carte, dateNaissance, telephone, role, createdAt, updatedAt);
-        this.specialite = specialite;
+        this.specialisteType = specialiteType;
         this.tarif = tarif;
         this.demandes = demandes;
         this.calendriers = calendriers;
     }
 
     public SpecialisteType getSpecialite() {
-        return specialite;
+        return specialisteType;
     }
 
     public void setSpecialite(SpecialisteType specialite) {
-        this.specialite = specialite;
+        this.specialisteType = specialite;
     }
 
     public Double getTarif() {

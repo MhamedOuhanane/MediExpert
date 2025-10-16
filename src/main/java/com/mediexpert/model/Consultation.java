@@ -133,11 +133,11 @@ public class Consultation {
         this.record = record;
     }
 
-    public Demande getDemandes() {
+    public Demande getDemande() {
         return demande;
     }
 
-    public void setDemandes(Demande demande) {
+    public void setDemande(Demande demande) {
         this.demande = demande;
     }
 

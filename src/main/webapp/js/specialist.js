@@ -1,4 +1,6 @@
-let currentWeekOffset = 0;
+if (typeof currentWeekOffset === 'undefined') {
+    var currentWeekOffset = 0;
+}
 
 function getMonday(d) {
     d = new Date(d);
@@ -36,13 +38,27 @@ function tagExpired(slotDate, slotTime) {
     return slotDateTime < now;
 }
 
-const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-const startHour = 8;
-const endHour = 18;
-const slotMinutes = 30;
+if (typeof dayNames === 'undefined') {
+    var dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+}
+
+if (typeof startHour === 'undefined') {
+    const startHour = 8;
+}
+if (typeof endHour === 'undefined') {
+    const endHour = 18;
+}
+if (typeof slotMinutes === 'undefined') {
+    const slotMinutes = 30;
+}
 
 function renderWeekCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
+    if (!calendarGrid) {
+        console.warn('Élément calendarGrid non trouvé');
+        return;
+    }
+
     calendarGrid.innerHTML = '';
 
     const monday = getMonday(new Date());
@@ -50,7 +66,7 @@ function renderWeekCalendar() {
     const sunday = new Date(monday);
     sunday.setDate(sunday.getDate() + 6);
 
-    const calendrierDataFiltrer = calendrierData.filter(cal => {
+    const calendrierDataFiltrer = (calendrierData || []).filter(cal => {
         const calDate = new Date(cal.date[0], cal.date[1] - 1, cal.date[2]);
         return calDate >= monday && calDate <= sunday;
     });
@@ -79,6 +95,8 @@ function renderWeekCalendar() {
         calendarGrid.appendChild(hourCell);
     }
 
+    const userRole = typeof role !== 'undefined' ? role : '';
+
     dayNames.forEach((dayName, dayIndex) => {
         const dayCell = document.createElement('div');
         dayCell.className = 'border border-gray-300 bg-gray-100 font-bold flex items-center justify-center';
@@ -100,7 +118,9 @@ function renderWeekCalendar() {
                 const slotDate = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex);
 
                 slotDiv.className = 'border border-gray-400 flex items-center justify-center text-xs bg-gray-300';
-                slotDiv.classList.add(role === 'specialist' ? 'cursor-pointer' : '');
+                if (userRole === 'generalist') {
+                    slotDiv.classList.add('cursor-not-allowed');
+                }
 
                 const calData = calendrierDataFiltrer[dayIndex];
 
@@ -120,9 +140,9 @@ function renderWeekCalendar() {
                         if (reserve) {
                             slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs text-white';
                             if (reserve.status === "TERMINEE") {
-                                slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed', 'pointer-events-none');
+                                slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed');
                             } else {
-                                slotDiv.classList.add('bg-orange-300', 'cursor-not-allowed', 'pointer-events-none');
+                                slotDiv.classList.add('bg-orange-300', 'cursor-not-allowed');
                             }
                         } else {
                             const indispo = calData.indisponibles?.find(ind =>
@@ -133,9 +153,9 @@ function renderWeekCalendar() {
                             if (indispo) {
                                 slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs bg-red-400 text-white';
 
-                                if (isExpired) {
+                                if (isExpired || userRole === 'generalist') {
                                     slotDiv.classList.add('cursor-not-allowed');
-                                } else if (role === 'specialist') {
+                                } else if (userRole === 'specialist') {
                                     slotDiv.classList.add('cursor-pointer', 'hover:bg-red-500');
                                     slotDiv.onclick = () => {
                                         fetchIndisponibilite({
@@ -150,7 +170,8 @@ function renderWeekCalendar() {
                                     slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-200';
                                 } else {
                                     slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-green-400';
-                                    if (role === 'specialist') {
+
+                                    if (userRole === 'specialist') {
                                         slotDiv.classList.add('hover:bg-green-500');
                                         slotDiv.onclick = () => {
                                             fetchIndisponibilite({
@@ -158,6 +179,13 @@ function renderWeekCalendar() {
                                                 calendrier_id: calData.id,
                                                 _methode: "POST"
                                             }, slotDiv);
+                                        };
+                                    } else if (userRole === 'generalist') {
+                                        slotDiv.classList.add('hover:bg-green-500', 'transition');
+                                        slotDiv.onclick = () => {
+                                            if (typeof selectTimeSlot === 'function') {
+                                                selectTimeSlot(slotDate, slotTime, slotDiv);
+                                            }
                                         };
                                     }
                                 }
@@ -186,7 +214,9 @@ function nextWeek() {
     renderWeekCalendar();
 }
 
-let isProcessing = false;
+if (typeof isProcessing === 'undefined') {
+    let isProcessing = false;
+}
 
 function fetchIndisponibilite(data, slotDiv) {
     if (isProcessing) {
@@ -218,13 +248,10 @@ function fetchIndisponibilite(data, slotDiv) {
         return res.json();
     })
     .then(result => {
-        console.log('Réponse serveur:', result);
-
         if (data._methode === 'DELETE' && result.deleted === true) {
             const cal = calendrierData.find(c => c.id === data.calendrier_id);
             if (cal && Array.isArray(cal.indisponibles)) {
                 cal.indisponibles = cal.indisponibles.filter(ind => ind.id !== data.id);
-                console.log('Indisponibilité supprimée:', data.id);
             }
         }
 
@@ -243,9 +270,6 @@ function fetchIndisponibilite(data, slotDiv) {
                         startTime: [h, m],
                         endTime: [eh, em]
                     });
-                    console.log('Indisponibilité ajoutée:', result.id);
-                } else {
-                    console.log('ℹIndisponibilité déjà existante:', result.id);
                 }
             }
         }
@@ -264,4 +288,8 @@ function fetchIndisponibilite(data, slotDiv) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', renderWeekCalendar);
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof role !== 'undefined' && role === 'specialist' && typeof calendrierData !== 'undefined') {
+        renderWeekCalendar();
+    }
+});

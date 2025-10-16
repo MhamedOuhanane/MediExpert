@@ -44,8 +44,13 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
     @Override
     public List<Specialiste> selectSpecialiste() {
         try (EntityManager em = DBUtil.getEntityManager()) {
-            return em.createQuery("SELECT s FROM Specialiste s", Specialiste.class)
+            List<Specialiste> specialistes = em.createQuery("SELECT s FROM Specialiste s", Specialiste.class)
                     .getResultList();
+            specialistes.forEach(s -> {
+                s.getCalendriers().size();
+                s.getDemandes().size();
+            });
+            return specialistes;
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la sélection des spécialistes: " + e.getMessage(), e);
         }

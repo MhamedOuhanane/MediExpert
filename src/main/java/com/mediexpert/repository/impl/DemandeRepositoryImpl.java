@@ -21,6 +21,9 @@ public class DemandeRepositoryImpl implements DemandeRepository {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
+                demande.setSpecialiste(em.find(Specialiste.class, demande.getSpecialiste().getId()));
+                demande.setConsultation(em.find(Consultation.class, demande.getConsultation().getId()));
+
                 em.persist(demande);
                 tx.commit();
                 return demande;

@@ -101,6 +101,8 @@
     </div>
 
     <script>
+        let calendrierData = ${calendrierJson} || [];
+
         const role = 'specialist';
     </script>
 

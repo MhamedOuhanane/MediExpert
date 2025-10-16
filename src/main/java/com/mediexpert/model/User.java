@@ -160,6 +160,8 @@ public abstract class User {
         return BCrypt.checkpw(password, this.password);
     }
 
+    public String getFullName() {return this.nom + " " + prenom;}
+
     public String getCreatedAtFormatted() {
         return DateFormat.getDateTimeFormatted(this.createdAt);
     }

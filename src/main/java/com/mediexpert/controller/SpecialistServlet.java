@@ -47,43 +47,9 @@ public class SpecialistServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
 
-        List<Map<String, Object>> calendrierList = new ArrayList<>();
-        if (specialiste != null) {
-            for (Calendrier cal : specialiste.getCalendriers()) {
-                Map<String, Object> calMap = new HashMap<>();
-                calMap.put("id", cal.getId());
-                calMap.put("date", cal.getDate());
-                calMap.put("startTime", cal.getStartTime());
-                calMap.put("endTime", cal.getEndTime());
-                calMap.put("disponibilite", cal.getDisponibilite());
+        String calJson = mapper.writeValueAsString(specialisteService.calendrierJson(specialiste));
 
-                List<Map<String, Object>> indisponibles = new ArrayList<>();
-                for (Indisponible indi : cal.getIndisponibles()) {
-                    Map<String, Object> indiMap = new HashMap<>();
-                    indiMap.put("id", indi.getId());
-                    indiMap.put("startTime", indi.getStartTime());
-                    indiMap.put("endTime", indi.getEndTime());
-                    indisponibles.add(indiMap);
-                }
-                calMap.put("indisponibles", indisponibles);
-
-                List<Map<String, Object>> reserves = new ArrayList<>();
-                for (Demande demand : specialiste.getDemandes()) {
-                    if (!demand.getStatut().equals(DemandeStatut.ANNULEE) && demand.getStartDate().toLocalDate().equals(cal.getDate())) {
-                        Map<String, Object> reseMap = new HashMap<>();
-                        reseMap.put("startTime", demand.getStartDate().toLocalTime());
-                        reseMap.put("endTime", demand.getStartDate().toLocalTime().plusMinutes(30));
-                        reseMap.put("status", demand.getStatut());
-                        reserves.add(reseMap);
-                    }
-                }
-                calMap.put("reserves", reserves);
-                calendrierList.add(calMap);
-            }
-        }
-
-        String calendrierJson = mapper.writeValueAsString(calendrierList);
-        req.setAttribute("calendrierJson", calendrierJson);
+        req.setAttribute("calendrierJson", calJson);
         req.setAttribute("specialist", specialiste);
         req.setAttribute("currentRoute", "/specialist");
         req.getRequestDispatcher("pages/specialist/profile.jsp").forward(req, resp);

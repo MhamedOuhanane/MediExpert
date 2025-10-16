@@ -33,6 +33,7 @@ function viewResponse(data) {
     document.getElementById('viewPatientName').textContent = data.patientName;
     document.getElementById('viewQuestion').textContent = data.question;
     document.getElementById('viewResponse').textContent = data.response;
+    document.getElementById('viewPatientCarte').textContent = data.patientCarte;
 
     document.getElementById('viewResponseModal').classList.remove('hidden');
 }

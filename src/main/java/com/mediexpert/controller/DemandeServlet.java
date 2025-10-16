@@ -1,10 +1,15 @@
 package com.mediexpert.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mediexpert.enums.DemandeStatut;
+import com.mediexpert.model.Consultation;
 import com.mediexpert.model.Demande;
 import com.mediexpert.model.Specialiste;
 import com.mediexpert.model.User;
+import com.mediexpert.service.interfaces.ConsultationService;
 import com.mediexpert.service.interfaces.DemandeService;
+import com.mediexpert.service.interfaces.SpecialisteService;
 import com.mediexpert.util.CSRFUtil;
 import com.mediexpert.util.SESSIONUtil;
 import jakarta.servlet.ServletException;
@@ -14,18 +19,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @WebServlet("/demandes/*")
 public class DemandeServlet extends HttpServlet {
     private DemandeService demandeService;
+    private SpecialisteService specialisteService;
 
     @Override
     public void init() throws ServletException {
         this.demandeService = (DemandeService) getServletContext().getAttribute("demandeService");
+        this.specialisteService = (SpecialisteService) getServletContext().getAttribute("specialisteService");
     }
 
     @Override
@@ -64,6 +68,16 @@ public class DemandeServlet extends HttpServlet {
             }
         }
         String path = req.getPathInfo() == null ? "" : req.getPathInfo() ;
+
+        try {
+            if (path.equals("/demand")) {
+                demand(req, resp);
+                return;
+            }
+        } catch (RuntimeException e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
+            req.getRequestDispatcher(req.getContextPath() + "/pages/specialist/demandes.jsp").forward(req, resp);
+        }
     }
 
     @Override
@@ -82,6 +96,30 @@ public class DemandeServlet extends HttpServlet {
             req.getSession().setAttribute("errorMessage", e.getMessage());
             resp.sendRedirect(req.getContextPath() + "/demandes");
             return;
+        }
+    }
+
+    private void demand(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String consultationId = req.getParameter("consultationId");
+        try {
+            UUID conID = UUID.fromString(consultationId);
+            List<Specialiste> specialistes = specialisteService.getAllSpecialiste();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+
+            Map<String, Object> calendriersMap = new HashMap<>();
+            for (Specialiste spec : specialistes) {
+                List<Map<String, Object>> calendrierJson = specialisteService.calendrierJson(spec);
+                calendriersMap.put(spec.getId().toString(), calendrierJson);
+            }
+
+            req.setAttribute("specialistes", specialistes);
+            req.setAttribute("calendriersMap", mapper.writeValueAsString(calendriersMap));
+            req.setAttribute("consultationId", conID);
+            req.getRequestDispatcher(req.getContextPath() + "/pages/generalist/demand.jsp").forward(req, resp);
+        } catch (RuntimeException e) {
+            req.getSession().setAttribute("errorMessage", e.getMessage());
+            req.getRequestDispatcher(req.getContextPath() + "/pages/specialist/demandes.jsp").forward(req, resp);
         }
     }
 }

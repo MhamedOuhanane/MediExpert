@@ -1,8 +1,10 @@
 package com.mediexpert.service.interfaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mediexpert.model.Specialiste;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +14,5 @@ public interface SpecialisteService {
     List<Specialiste> getAllSpecialiste();
     Specialiste updateSpecialiste(Specialiste specialiste);
     Boolean deleteSpecialiste(Integer id);
+    public List<Map<String, Object>> calendrierJson(Specialiste specialiste) throws JsonProcessingException;
 }

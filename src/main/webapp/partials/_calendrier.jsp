@@ -57,7 +57,9 @@
 </div>
 
 <script>
-    let calendrierData = ${calendrierJson};
+    const slotMinutes = 30;
+    const startHour = 8;
+    const endHour = 18;
 </script>
 
 <script src="${pageContext.request.contextPath}/js/specialist.js"></script>
