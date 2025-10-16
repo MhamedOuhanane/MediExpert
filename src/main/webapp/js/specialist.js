@@ -30,7 +30,7 @@ function tagExpired(slotDate, slotTime) {
         slotDate.getMonth(),
         slotDate.getDate(),
         hours,
-        minutes + 30
+        minutes
     );
     const now = new Date();
     return slotDateTime < now;
@@ -157,6 +157,10 @@ function renderWeekCalendar() {
                         }
                     }
                 }
+                if (isExpired) {
+                    slotDiv.classList.add('cursor-not-allowed');
+                }
+                slotDiv.title = `time: ${slotTime}`;
 
                 calendarGrid.appendChild(slotDiv);
             }
