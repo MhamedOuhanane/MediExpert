@@ -9,6 +9,7 @@ import com.mediexpert.model.Specialiste;
 import com.mediexpert.repository.interfaces.SpecialisteRepository;
 import com.mediexpert.service.interfaces.SpecialisteService;
 
+import java.time.LocalTime;
 import java.util.*;
 
 public class SpecialisteServiceImpl implements SpecialisteService {
@@ -70,11 +71,18 @@ public class SpecialisteServiceImpl implements SpecialisteService {
 
                 List<Map<String, Object>> reserves = new ArrayList<>();
                 for (Demande demand : specialiste.getDemandes()) {
-                    if (!demand.getStatut().equals(DemandeStatut.ANNULEE) && demand.getStartDate().toLocalDate().equals(cal.getDate())) {
+                    if (!demand.getStatut().equals(DemandeStatut.ANNULEE) &&
+                            demand.getStartDate().toLocalDate().equals(cal.getDate())) {
+
                         Map<String, Object> reseMap = new HashMap<>();
-                        reseMap.put("startTime", demand.getStartDate().toLocalTime());
-                        reseMap.put("endTime", demand.getStartDate().toLocalTime().plusMinutes(30));
-                        reseMap.put("status", demand.getStatut());
+
+                        LocalTime startTime = demand.getStartDate().toLocalTime();
+                        LocalTime endTime = startTime.plusMinutes(30);
+
+                        reseMap.put("startTime", new int[]{startTime.getHour(), startTime.getMinute()});
+                        reseMap.put("endTime", new int[]{endTime.getHour(), endTime.getMinute()});
+                        reseMap.put("status", demand.getStatut().toString());
+
                         reserves.add(reseMap);
                     }
                 }
@@ -84,6 +92,5 @@ public class SpecialisteServiceImpl implements SpecialisteService {
         }
 
         return calendrierList;
-
     }
 }

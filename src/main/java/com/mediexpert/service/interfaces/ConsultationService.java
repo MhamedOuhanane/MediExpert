@@ -10,5 +10,7 @@ public interface ConsultationService {
     Consultation findConsultationById(UUID consultationId);
     List<Consultation> getAllConsultation();
     Consultation updateConsultation(Consultation consultation);
+    Consultation termineConsultation(Consultation consultation);
     Boolean deleteConsultation(UUID id);
+
 }

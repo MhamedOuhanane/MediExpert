@@ -9,6 +9,7 @@
     List<Consultation> consultations = (List<Consultation>) request.getAttribute("consultations");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 %>
 
 <!DOCTYPE html>
@@ -170,21 +171,29 @@
                                                     </svg>
                                                 </button>
                                             </form>
-                                            <% } else if (consultation != null && consultation.getDemande() != null) { String responseText = consultation.getDemande().getResponse() != null ? consultation.getDemande().getResponse() : ""; %>
+                                            <% } else if (consultation != null && consultation.getDemande() != null) {
+                                                String responseText = consultation.getDemande().getResponse() != null ? consultation.getDemande().getResponse() : "";
+                                                String demandId = consultation.getDemande().getId() != null ? consultation.getDemande().getId().toString() : null;
+                                                String demandDate = consultation.getDemande().getStartDate() != null
+                                                                            ? consultation.getDemande().getStartDate().format(dateTimeFormatter1)
+                                                                            : null;
+                                            %>
                                             <button type="button" onclick='viewResponse(<%=
                                                 "{" +
                                                 "\"question\":\"" + consultation.getDemande().getQuestion().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"response\":\"" + responseText.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"patientCarte\":\"" + consultation.getRecord().getCarte().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
-                                                "\"status\":\"" + consultation.getDemande().get.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"status\":\"" + consultation.getDemande().getStatut().toString().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"demandDate\":\"" + demandDate.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"demandId\":\"" + demandId.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"patientName\":\"" + consultation.getRecord().getNom()  + "\"" +
                                                 "}"
                                             %>)'
                                                     class="p-1.5 text-purple-600 hover:bg-purple-100 rounded-lg transition"
                                                     title="Voir réponse">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/>
                                                 </svg>
                                             </button>
                                             <% } %>
@@ -369,7 +378,7 @@
                 </div>
 
                 <!-- Réponse du spécialiste -->
-                <div>
+                <div id="viewResponseParent">
                     <label class="text-sm font-semibold text-gray-700 mb-1 block">Réponse de Specialiste</label>
                     <div class="bg-green-50 p-3 rounded-lg border border-green-200">
                         <p class="text-sm text-gray-800 whitespace-pre-wrap" id="viewResponse"></p>
@@ -377,21 +386,27 @@
                 </div>
 
                 <!-- Status Demande -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Statut de la demande</label>
-                    <span id="viewDemandeStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border bg-gray-100 text-gray-800"></span>
-                </div>
+                <div class="flex justify-between items-contre px-2">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700 mb-1 block">Demande</label>
+                        <div class="flex flex-col space-y-2">
+                            <span>Status: <p id="viewDemandeStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border "></p></span>
+                            <span>Start Date: <p id="viewDemandeDate" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray=-100 text-gray-600 border "></p></span>
+                        </div>
+                    </div>
 
-                <!-- Bouton Annuler si EN_ATTENTE -->
-                <div id="cancelDemandeContainer" class="hidden">
-                    <form action="${pageContext.request.contextPath}/demandes/cancel" method="POST">
-                        <input type="hidden" name="demandeId" id="cancelDemandeId" />
-                        <input type="hidden" name="csrfToken" value="${csrfToken}" />
-                        <button type="submit"
-                                class="px-4 py-2 mt-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
-                            Annuler la demande
-                        </button>
-                    </form>
+                    <!-- Bouton Annuler si EN_ATTENTE -->
+                    <div id="cancelDemandeContainer" class="hidden">
+                        <form action="${pageContext.request.contextPath}/demandes/cancel" method="POST">
+                            <input type="hidden" name="demandeId" id="cancelDemandeId" />
+                            <input type="hidden" name="csrfToken" value="${csrfToken}" />
+                            <input type="hidden" name="_methode" value="PUT" />
+                            <button type="submit"
+                                    class="px-4 py-2 mt-2 bg-gradient-to-r from-purple-400 to-red-300 text-white rounded-lg hover:to-purple-600 hover:to-red-400 transition text-sm">
+                                Annuler la demande
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 

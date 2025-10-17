@@ -66,6 +66,20 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
+    public Consultation termineConsultation(Consultation consultation) {
+        if (consultation == null) throw new IllegalArgumentException("Le demande ne peut pas être null.");
+        try {
+            Consultation consultation1 = this.consultationRepository.updateConsultation(consultation);
+            if (consultation1 != null && consultation.getStatut().equals(ConsultationStatut.TERMINEE)) {
+                Record record = this.recordService.updateStatus(consultation1.getRecord().getId(), StatusPatient.TERMINEE);
+            }
+            return consultation1;
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public Boolean deleteConsultation(UUID id) {
         if (id == null) throw new IllegalArgumentException("L'id de consultation ne peut pas être null.");
         try {

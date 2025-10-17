@@ -32,16 +32,34 @@ function closeResponseModal() {
 function viewResponse(data) {
     document.getElementById('viewPatientName').textContent = data.patientName;
     document.getElementById('viewQuestion').textContent = data.question;
-    document.getElementById('viewResponse').textContent = data.response;
+    if (data.response !== '') document.getElementById('viewResponse').textContent = data.response;
+    else document.getElementById('viewResponseParent').classList.add('hidden');
     document.getElementById('viewPatientCarte').textContent = data.patientCarte;
     document.getElementById('viewDemandeStatus').innerText = data.status;
-
-    if(data?.status === "EN_ATTENTE") {
-        document.getElementById('cancelDemandeContainer').classList.remove('hidden');
-        document.getElementById('cancelDemandeId').value = demande.id;
-    } else {
-        document.getElementById('cancelDemandeContainer').classList.add('hidden');
+    if (data.demandDate) {
+        document.getElementById('viewDemandeDate').innerText = 'Date: ' + data.demandDate ;
     }
+
+    const cancelContainer = document.getElementById('cancelDemandeContainer');
+    const cancelIdInput = document.getElementById('cancelDemandeId');
+
+    if (data.status === 'EN_ATTENTE_AVIS_SPECIALISTE' && data.demandDate) {
+            document.getElementById('viewDemandeStatus').classList.add('bg-blue-100', 'text-blue-800');
+            const today = new Date();
+            const demandDateObj = new Date(data.demandDate);
+            console.log(demandDateObj > today, demandDateObj, data.demandDate, today)
+            if (demandDateObj > today) {
+                cancelContainer.classList.remove('hidden');
+                cancelIdInput.value = data.demandId;
+            } else {
+                cancelContainer.classList.add('hidden');
+            }
+        } else if (data.status === 'TERMINEE') {
+            cancelContainer.classList.add('hidden');
+            document.getElementById('viewDemandeStatus').classList.add('bg-green-100', 'text-green-800');
+        } else {
+            cancelContainer.classList.add('hidden');
+        }
     document.getElementById('viewResponseModal').classList.remove('hidden');
 }
 

@@ -1,6 +1,4 @@
-if (typeof currentWeekOffset === 'undefined') {
-    var currentWeekOffset = 0;
-}
+if (typeof currentWeekOffset === 'undefined') var currentWeekOffset = 0;
 
 function getMonday(d) {
     d = new Date(d);
@@ -26,31 +24,23 @@ function timeArrayToString(timeArray) {
 }
 
 function tagExpired(slotDate, slotTime) {
+    const now = new Date();
     const [hours, minutes] = slotTime.split(':').map(Number);
-    const slotDateTime = new Date(
+    const endDateTime = new Date(
         slotDate.getFullYear(),
         slotDate.getMonth(),
         slotDate.getDate(),
         hours,
         minutes
     );
-    const now = new Date();
-    return slotDateTime < now;
+    return endDateTime < now;
 }
 
-if (typeof dayNames === 'undefined') {
-    var dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-}
+if (typeof dayNames === 'undefined') var dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+if (typeof startHour === 'undefined') {const startHour = 8;}
+if (typeof endHour === 'undefined') {const endHour = 18;}
+if (typeof slotMinutes === 'undefined') {const slotMinutes = 30;}
 
-if (typeof startHour === 'undefined') {
-    const startHour = 8;
-}
-if (typeof endHour === 'undefined') {
-    const endHour = 18;
-}
-if (typeof slotMinutes === 'undefined') {
-    const slotMinutes = 30;
-}
 
 function renderWeekCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
@@ -103,6 +93,9 @@ function renderWeekCalendar() {
         dayCell.textContent = dayName;
         calendarGrid.appendChild(dayCell);
 
+        const currentDay = new Date(monday);
+        currentDay.setDate(monday.getDate() + dayIndex);
+        currentDay.setHours(0, 0, 0, 0);
         for (let h = startHour; h < endHour; h++) {
             for (let half = 0; half < 60; half += slotMinutes) {
                 const slotDiv = document.createElement('div');
@@ -114,16 +107,20 @@ function renderWeekCalendar() {
                     endHourSlot += 1;
                 }
                 const slotEnd = `${String(endHourSlot).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
-
-                const slotDate = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + dayIndex);
-
-                slotDiv.className = 'border border-gray-400 flex items-center justify-center text-xs bg-gray-300';
-                if (userRole === 'generalist') {
-                    slotDiv.classList.add('cursor-not-allowed');
-                }
-
                 const calData = calendrierDataFiltrer[dayIndex];
+//                if (!calData || !calData.date) {
+//                    for (let h = startHour; h < endHour; h++) {
+//                        for (let half = 0; half < 60; half += slotMinutes) {
+//                            const slotDiv = document.createElement('div');
+//                            slotDiv.className = 'border border-gray-300 bg-gray-200 text-xs ';
+//                            calendarGrid.appendChild(slotDiv);
+//                        }
+//                    }
+//                }
+                const slotDate = new Date(currentDay);
+                slotDate.setHours(h, half, 0, 0);
 
+                slotDiv.className = 'border flex items-center justify-center text-xs border-gray-300 bg-gray-200';
                 const isExpired = tagExpired(slotDate, slotTime);
 
                 if (calData) {
@@ -139,7 +136,9 @@ function renderWeekCalendar() {
 
                         if (reserve) {
                             slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs text-white';
-                            if (reserve.status === "TERMINEE") {
+                            console.log(slotDate);
+
+                            if (reserve.status === "TERMINEE" || tagExpired(slotDate, slotTime)) {
                                 slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed');
                             } else {
                                 slotDiv.classList.add('bg-orange-300', 'cursor-not-allowed');
@@ -153,9 +152,9 @@ function renderWeekCalendar() {
                             if (indispo) {
                                 slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs bg-red-400 text-white';
 
-                                if (isExpired || userRole === 'generalist') {
+                                if (isExpired) {
                                     slotDiv.classList.add('cursor-not-allowed');
-                                } else if (userRole === 'specialist') {
+                                } else if (role === 'specialist') {
                                     slotDiv.classList.add('cursor-pointer', 'hover:bg-red-500');
                                     slotDiv.onclick = () => {
                                         fetchIndisponibilite({
@@ -196,7 +195,7 @@ function renderWeekCalendar() {
                 if (isExpired) {
                     slotDiv.classList.add('cursor-not-allowed');
                 }
-                slotDiv.title = `${slotTime} - ${slotEnd}`;
+                slotDiv.title = `${slotDate} / ${slotTime} - ${slotEnd}`;
 
                 calendarGrid.appendChild(slotDiv);
             }
@@ -214,9 +213,7 @@ function nextWeek() {
     renderWeekCalendar();
 }
 
-if (typeof isProcessing !== 'undefined') {
-    let isProcessing = false;
-}
+let isProcessing = false;
 
 function fetchIndisponibilite(data, slotDiv) {
     if (isProcessing) {
@@ -270,6 +267,9 @@ function fetchIndisponibilite(data, slotDiv) {
                         startTime: [h, m],
                         endTime: [eh, em]
                     });
+                    console.log('Indisponibilité ajoutée:', result.id);
+                } else {
+                    console.log('ℹIndisponibilité déjà existante:', result.id);
                 }
             }
         }
@@ -288,6 +288,7 @@ function fetchIndisponibilite(data, slotDiv) {
     });
 }
 
+// Initialisation au chargement de la page si role est 'specialist'
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof role !== 'undefined' && role === 'specialist' && typeof calendrierData !== 'undefined') {
         renderWeekCalendar();

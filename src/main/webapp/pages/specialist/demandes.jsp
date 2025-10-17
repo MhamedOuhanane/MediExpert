@@ -166,13 +166,14 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </button>
-                                            <% } else if (demande.getStatut() == DemandeStatut.TERMINEE && demande.getResponse() != null) { %>
-                                            <!-- Voir réponse -->
+                                            <% } else if (consultation != null && consultation.getDemande() != null) { String responseText = consultation.getDemande().getResponse() != null ? consultation.getDemande().getResponse() : ""; %>
                                             <button type="button" onclick='viewResponse(<%=
                                                 "{" +
-                                                "\"question\":\"" + demande.getQuestion().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
-                                                "\"response\":\"" + demande.getResponse().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
-                                                "\"patientName\":\"" + patientName + "\"" +
+                                                "\"question\":\"" + consultation.getDemande().getQuestion().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"response\":\"" + responseText.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"patientCarte\":\"" + consultation.getRecord().getCarte().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"status\":\"" + consultation.getDemande().getStatut().toString().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"patientName\":\"" + consultation.getRecord().getNom()  + "\"" +
                                                 "}"
                                             %>)'
                                                     class="p-1.5 text-purple-600 hover:bg-purple-100 rounded-lg transition"
@@ -359,7 +360,10 @@
             <div class="flex-1 overflow-y-auto p-4 space-y-4">
                 <div>
                     <label class="text-sm font-semibold text-gray-700 mb-1 block">Patient</label>
-                    <p class="text-sm text-gray-600 bg-gray-50 p-2 rounded-lg" id="viewPatientName"></p>
+                    <div class="text-gray-600 bg-gray-50 p-2 rounded-lg">
+                        <p class="text-sm" id="viewPatientName"></p>
+                        <p class="text-xs" id="viewPatientCarte"></p>
+                    </div>
                 </div>
 
                 <div>
@@ -374,6 +378,12 @@
                     <div class="bg-green-50 p-3 rounded-lg border border-green-200">
                         <p class="text-sm text-gray-800 whitespace-pre-wrap" id="viewResponse"></p>
                     </div>
+                </div>
+
+                <!-- Status Demande -->
+                <div>
+                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Statut de la demande</label>
+                    <span id="viewDemandeStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border "></span>
                 </div>
             </div>
 
