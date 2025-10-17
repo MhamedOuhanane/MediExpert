@@ -34,7 +34,14 @@ function viewResponse(data) {
     document.getElementById('viewQuestion').textContent = data.question;
     document.getElementById('viewResponse').textContent = data.response;
     document.getElementById('viewPatientCarte').textContent = data.patientCarte;
+    document.getElementById('viewDemandeStatus').innerText = data.status;
 
+    if(data?.status === "EN_ATTENTE") {
+        document.getElementById('cancelDemandeContainer').classList.remove('hidden');
+        document.getElementById('cancelDemandeId').value = demande.id;
+    } else {
+        document.getElementById('cancelDemandeContainer').classList.add('hidden');
+    }
     document.getElementById('viewResponseModal').classList.remove('hidden');
 }
 

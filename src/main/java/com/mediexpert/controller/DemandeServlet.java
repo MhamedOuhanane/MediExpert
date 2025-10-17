@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @WebServlet("/demandes/*")
@@ -73,10 +74,31 @@ public class DemandeServlet extends HttpServlet {
             if (path.equals("/demand")) {
                 demand(req, resp);
                 return;
+            } else if (path.isEmpty() || path.equals("/")) {
+                UUID consultationId = UUID.fromString(req.getParameter("consultationId"));
+                String question = req.getParameter("question");
+                UUID specialisteId = UUID.fromString(req.getParameter("specialisteId"));
+                double prix = Double.parseDouble(req.getParameter("prix"));
+                LocalDateTime startDate = LocalDateTime.parse(req.getParameter("startDate"));
+                Demande demande = new Demande();
+                Consultation consultation = new Consultation();
+                Specialiste specialiste = new Specialiste();
+                specialiste.setId(specialisteId);
+                consultation.setId(consultationId);
+                demande.setSpecialiste(specialiste);
+                demande.setConsultation(consultation);
+                demande.setQuestion(question);
+                demande.setPrix(prix);
+                demande.setStartDate(startDate);
+                demande.setStatut(DemandeStatut.EN_ATTENTE_AVIS_SPECIALISTE);
+
+                Demande demande1 = demandeService.addDemande(demande);
+                req.getSession().setAttribute("successMessage", "Le Demande du consultation de patient de carte '" + demande1.getConsultation().getRecord().getCarte() + "' a été ajouté avec succès !");
+                resp.sendRedirect(req.getContextPath() + "/consultations");
             }
         } catch (RuntimeException e) {
             req.getSession().setAttribute("errorMessage", e.getMessage());
-            req.getRequestDispatcher(req.getContextPath() + "/pages/specialist/demandes.jsp").forward(req, resp);
+            resp.sendRedirect(req.getContextPath() + "/consultations");
         }
     }
 

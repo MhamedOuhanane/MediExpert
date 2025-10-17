@@ -214,7 +214,7 @@ function nextWeek() {
     renderWeekCalendar();
 }
 
-if (typeof isProcessing === 'undefined') {
+if (typeof isProcessing !== 'undefined') {
     let isProcessing = false;
 }
 

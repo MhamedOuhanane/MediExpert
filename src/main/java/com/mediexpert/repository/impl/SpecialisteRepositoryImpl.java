@@ -33,8 +33,11 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
     public Optional<Specialiste> findSpecialiste(UUID specialisteId) {
         try (EntityManager em = DBUtil.getEntityManager()) {
             Specialiste s = em.find(Specialiste.class, specialisteId);
-            Hibernate.initialize(s.getCalendriers());
-            Hibernate.initialize(s.getDemandes());
+            if (s != null) {
+                Hibernate.initialize(s.getCalendriers());
+                Hibernate.initialize(s.getDemandes());
+                s.getDemandes().forEach(d -> Hibernate.initialize(d.getNotifications()));
+            }
             return Optional.ofNullable(s);
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de la recherche du spécialiste d'id '" + specialisteId + "':" + e.getMessage(), e);

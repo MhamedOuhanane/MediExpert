@@ -4,6 +4,7 @@ import com.mediexpert.enums.ConsultationStatut;
 import com.mediexpert.enums.DemandeStatut;
 import com.mediexpert.model.Consultation;
 import com.mediexpert.model.Demande;
+import com.mediexpert.model.Notification;
 import com.mediexpert.model.Specialiste;
 import com.mediexpert.repository.interfaces.DemandeRepository;
 import com.mediexpert.service.interfaces.ConsultationService;
@@ -24,7 +25,24 @@ public class DemandeServiceImpl implements DemandeService {
     @Override
     public Demande addDemande(Demande demande) {
         if (demande == null) throw new IllegalArgumentException("Le demande ne peut pas être null.");
-        return demandeRepository.insert(demande);
+        if (demande.getConsultation() == null) throw new IllegalArgumentException("Le consultation demander ne peut pas être null.");
+        if (demande.getSpecialiste() == null) throw new IllegalArgumentException("Le specialiste a demander ne peut pas être null.");
+        try {
+            Demande demande1 = demandeRepository.insert(demande);
+//            if (demande1 != null) {
+//                Notification notification = new Notification();
+//                notification.setDemande(demande1);
+//                notification.setRead(false);
+//                notification.setMessage("Vous avais un nouveau demande a la date: " +
+//                        demande1.getStartDate().toString() + "pour le patient " +
+//                        demande1.getConsultation().getRecord().getNom() + " " +
+//                        demande1.getConsultation().getRecord().getPrenom());
+//
+//            }
+            return demande1;
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -40,7 +58,7 @@ public class DemandeServiceImpl implements DemandeService {
                 .sorted((r1, r2) -> {
                     int o1 = getStatusOrder(r1.getStatut().toString());
                     int o2 = getStatusOrder(r2.getStatut().toString());
-                    if (r1 != r2) return Integer.compare(o1, o2);
+                    if (o1 != o2) return Integer.compare(o1, o2);
                     return r2.getUpdatedAt().compareTo(r1.getUpdatedAt());
                 })
                 .toList();
@@ -60,12 +78,15 @@ public class DemandeServiceImpl implements DemandeService {
             Demande demande = findDemandeById(uuid);
             demande.setResponse(response);
             demande.setStatut(statut);
-            Demande demande1 = this.demandeRepository.update(demande);
-            if (demande1 != null && demande1.getConsultation() != null) {
-                demande1.getConsultation().setStatut(ConsultationStatut.TERMINEE);
-                Consultation consultation = consultationService.updateConsultation(demande1.getConsultation());
+
+            if (demande.getConsultation() != null && statut == DemandeStatut.TERMINEE) {
+                Consultation consultation = demande.getConsultation();
+                consultation.setStatut(ConsultationStatut.TERMINEE);
+                consultationService.updateConsultation(consultation);
+                demande = findDemandeById(uuid);
             }
-            return demande1;
+
+            return this.demandeRepository.update(demande);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

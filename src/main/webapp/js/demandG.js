@@ -27,7 +27,7 @@ function openDemandModal(data) {
     document.getElementById('specialisteNameDisplay').textContent = data.specialisteName;
     document.getElementById('specialiteTypeDisplay').textContent = data.specialiteType;
     document.getElementById('tarifDisplay').textContent = data.tarif + ' DH';
-    document.getElementById('prixInput').value = data.tarif;
+    document.getElementById('prixInput').value = data.tarif.replace(',', '.');
     document.getElementById('startDateInput').value = '';
 
     loadCalendrier(data.specialisteId);
@@ -83,10 +83,11 @@ function selectTimeSlot(slotDate, slotTime, slotDiv) {
         hours,
         minutes
     );
-
+    console.log(appointmentDate)
     const isoDate = appointmentDate.toISOString();
+    console.log(isoDate)
 
-    document.getElementById('startDateInput').value = isoDate;
+    document.getElementById('startDateInput').value = isoDate.replace("Z", "");
 
     selectedTimeSlot = {
         date: slotDate,

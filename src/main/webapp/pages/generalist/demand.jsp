@@ -165,7 +165,7 @@
 
             <!-- Body - Scrollable -->
             <div class="flex-1 overflow-y-auto p-4">
-                <form id="demandForm" action="${pageContext.request.contextPath}/demandes/create" method="POST" class="space-y-4">
+                <form id="demandForm" action="${pageContext.request.contextPath}/demandes" method="POST" class="space-y-4">
                     <input type="hidden" name="csrfToken" value="${csrfToken}" />
                     <input type="hidden" name="consultationId" value="<%= consultationId %>" />
                     <input type="hidden" name="specialisteId" id="specialisteIdInput" />
