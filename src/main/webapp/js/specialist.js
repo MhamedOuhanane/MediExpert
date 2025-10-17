@@ -56,15 +56,19 @@ function renderWeekCalendar() {
     const sunday = new Date(monday);
     sunday.setDate(sunday.getDate() + 6);
 
-    const calendrierDataFiltrer = (calendrierData || []).filter(cal => {
-        const calDate = new Date(cal.date[0], cal.date[1] - 1, cal.date[2]);
-        return calDate >= monday && calDate <= sunday;
-    });
-
     const weekRangeEl = document.getElementById('weekRange');
     if (weekRangeEl) {
         weekRangeEl.textContent = `${formatDateDisplay(monday)} - ${formatDateDisplay(sunday)}`;
     }
+
+    // Debug: Afficher les dates disponibles
+    console.log('Semaine affichée:', formatDate(monday), 'au', formatDate(sunday));
+    console.log('Dates dans calendrierData:');
+    (calendrierData || []).forEach(cal => {
+        if (cal.date && cal.date.length >= 3) {
+            console.log('  -', `${cal.date[0]}-${String(cal.date[1]).padStart(2, '0')}-${String(cal.date[2]).padStart(2, '0')}`);
+        }
+    });
 
     const slotsPerHour = 60 / slotMinutes;
     const totalSlots = (endHour - startHour) * slotsPerHour;
@@ -96,6 +100,15 @@ function renderWeekCalendar() {
         const currentDay = new Date(monday);
         currentDay.setDate(monday.getDate() + dayIndex);
         currentDay.setHours(0, 0, 0, 0);
+
+        const calData = (calendrierData || []).find(cal => {
+            if (!cal.date || cal.date.length < 3) return false;
+            const calDate = new Date(cal.date[0], cal.date[1] - 1, cal.date[2]);
+            calDate.setHours(0, 0, 0, 0);
+
+            return calDate.getTime() === currentDay.getTime();
+        });
+
         for (let h = startHour; h < endHour; h++) {
             for (let half = 0; half < 60; half += slotMinutes) {
                 const slotDiv = document.createElement('div');
@@ -107,95 +120,101 @@ function renderWeekCalendar() {
                     endHourSlot += 1;
                 }
                 const slotEnd = `${String(endHourSlot).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
-                const calData = calendrierDataFiltrer[dayIndex];
-//                if (!calData || !calData.date) {
-//                    for (let h = startHour; h < endHour; h++) {
-//                        for (let half = 0; half < 60; half += slotMinutes) {
-//                            const slotDiv = document.createElement('div');
-//                            slotDiv.className = 'border border-gray-300 bg-gray-200 text-xs ';
-//                            calendarGrid.appendChild(slotDiv);
-//                        }
-//                    }
-//                }
                 const slotDate = new Date(currentDay);
                 slotDate.setHours(h, half, 0, 0);
+
+                if (!calData || !calData.date) {
+                    slotDiv.className = 'border border-gray-300 bg-gray-200 text-xs';
+                    slotDiv.title = `${formatDate(currentDay)} / ${slotTime} - ${slotEnd}`;
+
+                    if (tagExpired(slotDate, slotTime || userRole === 'generalist')) {
+                        slotDiv.classList.add('cursor-not-allowed');
+                    } else {
+                        slotDiv.classList.add('cursor-pointer', 'hover:bg-gray-300');
+                        slotDiv.onclick = () => {
+                            openCalendrierModal(formatDate(currentDay));
+                        };
+                    }
+
+                    calendarGrid.appendChild(slotDiv);
+                    continue;
+                }
+
 
                 slotDiv.className = 'border flex items-center justify-center text-xs border-gray-300 bg-gray-200';
                 const isExpired = tagExpired(slotDate, slotTime);
 
-                if (calData) {
-                    const startTimeStr = timeArrayToString(calData.startTime);
-                    const endTimeStr = timeArrayToString(calData.endTime);
-                    const isTravail = slotTime >= startTimeStr && slotTime < endTimeStr;
+                const startTimeStr = timeArrayToString(calData.startTime);
+                const endTimeStr = timeArrayToString(calData.endTime);
+                const isTravail = slotTime >= startTimeStr && slotTime < endTimeStr;
 
-                    if (isTravail) {
-                        const reserve = calData.reserves?.find(res =>
-                            timeArrayToString(res.startTime) <= slotTime &&
-                            slotTime < timeArrayToString(res.endTime)
+                if (isTravail) {
+                    const reserve = calData.reserves?.find(res =>
+                        timeArrayToString(res.startTime) <= slotTime &&
+                        slotTime < timeArrayToString(res.endTime)
+                    );
+
+                    if (reserve) {
+                        slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs text-white';
+
+                        if (reserve.status === "TERMINEE" || isExpired) {
+                            slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed');
+                        } else {
+                            slotDiv.classList.add('bg-orange-300', 'cursor-not-allowed');
+                        }
+                    } else {
+                        const indispo = calData.indisponibles?.find(ind =>
+                            timeArrayToString(ind.startTime) <= slotTime &&
+                            slotTime < timeArrayToString(ind.endTime)
                         );
 
-                        if (reserve) {
-                            slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs text-white';
-                            console.log(slotDate);
+                        if (indispo) {
+                            slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs bg-red-400 text-white';
 
-                            if (reserve.status === "TERMINEE" || tagExpired(slotDate, slotTime)) {
-                                slotDiv.classList.add('bg-blue-200', 'cursor-not-allowed');
-                            } else {
-                                slotDiv.classList.add('bg-orange-300', 'cursor-not-allowed');
+                            if (isExpired) {
+                                slotDiv.classList.add('cursor-not-allowed');
+                            } else if (role === 'specialist') {
+                                slotDiv.classList.add('cursor-pointer', 'hover:bg-red-500');
+                                slotDiv.onclick = () => {
+                                    fetchIndisponibilite({
+                                        id: indispo.id,
+                                        calendrier_id: calData.id,
+                                        _methode: "DELETE"
+                                    }, slotDiv);
+                                };
                             }
                         } else {
-                            const indispo = calData.indisponibles?.find(ind =>
-                                timeArrayToString(ind.startTime) <= slotTime &&
-                                slotTime < timeArrayToString(ind.endTime)
-                            );
+                            if (isExpired) {
+                                slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-200';
+                            } else {
+                                slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-green-400';
 
-                            if (indispo) {
-                                slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs bg-red-400 text-white';
-
-                                if (isExpired) {
-                                    slotDiv.classList.add('cursor-not-allowed');
-                                } else if (role === 'specialist') {
-                                    slotDiv.classList.add('cursor-pointer', 'hover:bg-red-500');
+                                if (userRole === 'specialist') {
+                                    slotDiv.classList.add('hover:bg-green-500');
                                     slotDiv.onclick = () => {
                                         fetchIndisponibilite({
-                                            id: indispo.id,
+                                            startTime: slotTime,
                                             calendrier_id: calData.id,
-                                            _methode: "DELETE"
+                                            _methode: "POST"
                                         }, slotDiv);
                                     };
-                                }
-                            } else {
-                                if (isExpired) {
-                                    slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-not-allowed bg-yellow-200';
-                                } else {
-                                    slotDiv.className = 'border border-gray-300 flex items-center justify-center text-xs cursor-pointer bg-green-400';
-
-                                    if (userRole === 'specialist') {
-                                        slotDiv.classList.add('hover:bg-green-500');
-                                        slotDiv.onclick = () => {
-                                            fetchIndisponibilite({
-                                                startTime: slotTime,
-                                                calendrier_id: calData.id,
-                                                _methode: "POST"
-                                            }, slotDiv);
-                                        };
-                                    } else if (userRole === 'generalist') {
-                                        slotDiv.classList.add('hover:bg-green-500', 'transition');
-                                        slotDiv.onclick = () => {
-                                            if (typeof selectTimeSlot === 'function') {
-                                                selectTimeSlot(slotDate, slotTime, slotDiv);
-                                            }
-                                        };
-                                    }
+                                } else if (userRole === 'generalist') {
+                                    slotDiv.classList.add('hover:bg-green-500', 'transition');
+                                    slotDiv.onclick = () => {
+                                        if (typeof selectTimeSlot === 'function') {
+                                            selectTimeSlot(slotDate, slotTime, slotDiv);
+                                        }
+                                    };
                                 }
                             }
                         }
                     }
                 }
+
                 if (isExpired) {
                     slotDiv.classList.add('cursor-not-allowed');
                 }
-                slotDiv.title = `${slotDate} / ${slotTime} - ${slotEnd}`;
+                slotDiv.title = `${formatDate(currentDay)} / ${slotTime} - ${slotEnd}`;
 
                 calendarGrid.appendChild(slotDiv);
             }
@@ -211,6 +230,37 @@ function previousWeek() {
 function nextWeek() {
     currentWeekOffset++;
     renderWeekCalendar();
+}
+
+function openCalendrierModal(date) {
+    const modal = document.getElementById('calendrierModal');
+    const dateInput = document.getElementById('calendrierDate');
+    const displayDate = document.getElementById('displayDate');
+
+    if (modal && dateInput && displayDate) {
+        dateInput.value = date;
+
+        const [year, month, day] = date.split('-');
+        const dateObj = new Date(year, month - 1, day);
+        displayDate.textContent = new Intl.DateTimeFormat('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).format(dateObj);
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closeCalendrierModal() {
+    const modal = document.getElementById('calendrierModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    document.getElementById('calendrierForm').reset();
 }
 
 let isProcessing = false;

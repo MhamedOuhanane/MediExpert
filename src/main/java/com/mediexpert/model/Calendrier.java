@@ -33,8 +33,7 @@ public class Calendrier {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
-    private Boolean disponibilite;
+    private Boolean disponibilite = true;
 
     @ManyToOne
     @JoinColumn(name = "specialiste_id")

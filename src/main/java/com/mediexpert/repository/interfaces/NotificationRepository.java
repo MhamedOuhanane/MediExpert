@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface NotificationRepository {
     Notification insert(Notification notification);
-    void readNotification();
+    void readNotification(Specialiste specialiste);
 }

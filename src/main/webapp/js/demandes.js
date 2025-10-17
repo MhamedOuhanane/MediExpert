@@ -33,7 +33,7 @@ function viewResponse(data) {
     document.getElementById('viewPatientName').textContent = data.patientName;
     document.getElementById('viewQuestion').textContent = data.question;
     if (data.response !== '') document.getElementById('viewResponse').textContent = data.response;
-    else document.getElementById('viewResponseParent').classList.add('hidden');
+    else if (role !== 'specialist') document.getElementById('viewResponseParent').classList.add('hidden');
     document.getElementById('viewPatientCarte').textContent = data.patientCarte;
     document.getElementById('viewDemandeStatus').innerText = data.status;
     if (data.demandDate) {
@@ -42,8 +42,8 @@ function viewResponse(data) {
 
     const cancelContainer = document.getElementById('cancelDemandeContainer');
     const cancelIdInput = document.getElementById('cancelDemandeId');
-
-    if (data.status === 'EN_ATTENTE_AVIS_SPECIALISTE' && data.demandDate) {
+    if (role !== 'specialist') {
+        if (data.status === 'EN_ATTENTE_AVIS_SPECIALISTE' && data.demandDate) {
             document.getElementById('viewDemandeStatus').classList.add('bg-blue-100', 'text-blue-800');
             const today = new Date();
             const demandDateObj = new Date(data.demandDate);
@@ -60,6 +60,7 @@ function viewResponse(data) {
         } else {
             cancelContainer.classList.add('hidden');
         }
+    }
     document.getElementById('viewResponseModal').classList.remove('hidden');
 }
 

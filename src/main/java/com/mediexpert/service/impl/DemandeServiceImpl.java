@@ -9,6 +9,7 @@ import com.mediexpert.model.Specialiste;
 import com.mediexpert.repository.interfaces.DemandeRepository;
 import com.mediexpert.service.interfaces.ConsultationService;
 import com.mediexpert.service.interfaces.DemandeService;
+import com.mediexpert.service.interfaces.NotificationService;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,10 +17,12 @@ import java.util.UUID;
 public class DemandeServiceImpl implements DemandeService {
     private final DemandeRepository demandeRepository;
     private final ConsultationService consultationService;
+    private final NotificationService notificationService;
 
-    public DemandeServiceImpl(DemandeRepository demandeRepository, ConsultationService consultationService) {
+    public DemandeServiceImpl(DemandeRepository demandeRepository, ConsultationService consultationService, NotificationService notificationService) {
         this.demandeRepository = demandeRepository;
         this.consultationService = consultationService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class DemandeServiceImpl implements DemandeService {
                         demande1.getStartDate().toString() + "pour le patient " +
                         demande1.getConsultation().getRecord().getNom() + " " +
                         demande1.getConsultation().getRecord().getPrenom());
-
+                notification = notificationService.addNotification(notification);
             }
             return demande1;
         } catch (RuntimeException e) {

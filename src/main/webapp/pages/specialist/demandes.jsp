@@ -10,6 +10,7 @@
     List<Demande> demands = (List<Demande>) request.getAttribute("demands");
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     LocalDateTime now = LocalDateTime.now();
 %>
 
@@ -166,13 +167,20 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </button>
-                                            <% } else if (consultation != null && consultation.getDemande() != null) { String responseText = consultation.getDemande().getResponse() != null ? consultation.getDemande().getResponse() : ""; %>
+                                            <% } else if (consultation != null && consultation.getDemande() != null) {
+                                                String responseText = consultation.getDemande().getResponse() != null ? consultation.getDemande().getResponse() : "";
+                                                String demandId = consultation.getDemande().getId() != null ? consultation.getDemande().getId().toString() : null;
+                                                String demandDate = consultation.getDemande().getStartDate() != null
+                                                                            ? consultation.getDemande().getStartDate().format(dateTimeFormatter1)
+                                                                            : null;
+                                            %>
                                             <button type="button" onclick='viewResponse(<%=
                                                 "{" +
                                                 "\"question\":\"" + consultation.getDemande().getQuestion().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"response\":\"" + responseText.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"patientCarte\":\"" + consultation.getRecord().getCarte().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"status\":\"" + consultation.getDemande().getStatut().toString().replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
+                                                "\"demandDate\":\"" + demandDate.replace("\"", "\\\"").replace("\n", "\\n") + "\"," +
                                                 "\"patientName\":\"" + consultation.getRecord().getNom()  + "\"" +
                                                 "}"
                                             %>)'
@@ -381,9 +389,14 @@
                 </div>
 
                 <!-- Status Demande -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-1 block">Statut de la demande</label>
-                    <span id="viewDemandeStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border "></span>
+                <div class="flex justify-between items-contre px-2">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700 mb-1 block">Demande</label>
+                        <div class="flex flex-col space-y-2">
+                            <span>Status: <p id="viewDemandeStatus" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border "></p></span>
+                            <span>Start Date: <p id="viewDemandeDate" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray=-100 text-gray-600 border "></p></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -411,6 +424,9 @@
             animation: scale-in 0.2s ease-out;
         }
     </style>
+    <script>
+        let role = 'specialist';
+    </script>
     <script src="${pageContext.request.contextPath}/js/demandes.js"></script>
 </body>
 </html>

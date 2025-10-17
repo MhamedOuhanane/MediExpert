@@ -2,8 +2,11 @@ package com.mediexpert.service.impl;
 
 import com.mediexpert.model.Demande;
 import com.mediexpert.model.Notification;
+import com.mediexpert.model.Specialiste;
 import com.mediexpert.repository.interfaces.NotificationRepository;
 import com.mediexpert.service.interfaces.NotificationService;
+
+import java.util.List;
 
 public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
@@ -20,7 +23,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void readNotifications() {
-        notificationRepository.readNotification();
+    public void readSpecNotifications(Specialiste specialiste) {
+        if (specialiste == null) throw new IllegalArgumentException("Le specialist ne peut pas être null.");
+        notificationRepository.readNotification(specialiste);
     }
 }

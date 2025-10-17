@@ -437,6 +437,9 @@
         }
     </style>
 
+    <script>
+        let role = 'generalist'
+    </script>
     <script src="${pageContext.request.contextPath}/js/consultation.js"></script>
     <script src="${pageContext.request.contextPath}/js/demandes.js"></script>
 </body>
