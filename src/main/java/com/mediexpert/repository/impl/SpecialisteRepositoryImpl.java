@@ -52,6 +52,7 @@ public class SpecialisteRepositoryImpl implements SpecialisteRepository {
             specialistes.forEach(s -> {
                 s.getCalendriers().size();
                 s.getDemandes().size();
+                s.getDemandes().forEach(d -> d.getNotifications().size());
             });
             return specialistes;
         } catch (Exception e) {

@@ -29,16 +29,16 @@ public class DemandeServiceImpl implements DemandeService {
         if (demande.getSpecialiste() == null) throw new IllegalArgumentException("Le specialiste a demander ne peut pas être null.");
         try {
             Demande demande1 = demandeRepository.insert(demande);
-//            if (demande1 != null) {
-//                Notification notification = new Notification();
-//                notification.setDemande(demande1);
-//                notification.setRead(false);
-//                notification.setMessage("Vous avais un nouveau demande a la date: " +
-//                        demande1.getStartDate().toString() + "pour le patient " +
-//                        demande1.getConsultation().getRecord().getNom() + " " +
-//                        demande1.getConsultation().getRecord().getPrenom());
-//
-//            }
+            if (demande1 != null) {
+                Notification notification = new Notification();
+                notification.setDemande(demande1);
+                notification.setRead(false);
+                notification.setMessage("Vous avais un nouveau demande a la date: " +
+                        demande1.getStartDate().toString() + "pour le patient " +
+                        demande1.getConsultation().getRecord().getNom() + " " +
+                        demande1.getConsultation().getRecord().getPrenom());
+
+            }
             return demande1;
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage(), e);
