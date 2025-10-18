@@ -97,7 +97,6 @@ public class DemandeServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/consultations");
             }
         } catch (RuntimeException e) {
-            req.getSession().setAttribute("errorMessage", e.getMessage());
             resp.sendRedirect(req.getContextPath() + "/consultations");
         }
     }

@@ -21,9 +21,15 @@ public class DemandeRepositoryImpl implements DemandeRepository {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
-                demande.setSpecialiste(em.find(Specialiste.class, demande.getSpecialiste().getId()));
-                demande.setConsultation(em.find(Consultation.class, demande.getConsultation().getId()));
+                Consultation consultation = em.find(Consultation.class, demande.getConsultation().getId());
+                if (consultation.getDemande() != null) {
+                    throw new RuntimeException("Une demande existe déjà pour cette consultation (ID: " +
+                            consultation.getDemande().getId() + ")");
+                }
+                Specialiste specialiste = em.find(Specialiste.class, demande.getSpecialiste().getId());
 
+                demande.setSpecialiste(specialiste);
+                demande.setConsultation(consultation);
                 em.persist(demande);
                 tx.commit();
                 return demande;
