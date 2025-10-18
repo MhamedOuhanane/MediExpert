@@ -233,7 +233,7 @@
     <div id="consultationDetailsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all animate-scale-in flex flex-col">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-4">
+            <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center min-w-0 flex-1">
                         <div id="modalAvatar" class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm shadow-lg mr-3 flex-shrink-0"></div>
@@ -337,7 +337,7 @@
             <!-- Footer -->
             <div class="bg-gray-50 p-3 border-t">
                 <button onclick="closeConsultationDetailsModal()"
-                        class="w-full px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
+                        class="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition text-sm">
                     Fermer
                 </button>
             </div>

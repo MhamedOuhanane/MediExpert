@@ -2,11 +2,7 @@ package com.mediexpert.repository.impl;
 
 import com.mediexpert.model.ActesTechniques;
 import com.mediexpert.model.Consultation;
-import com.mediexpert.model.Consultation;
-import com.mediexpert.model.Record;
-import com.mediexpert.repository.interfaces.ActesTechniquesRepository;
 import com.mediexpert.repository.interfaces.ConsultationRepository;
-import com.mediexpert.repository.interfaces.RecordRepository;
 import com.mediexpert.util.DBUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -24,8 +20,6 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
-                Record patient = em.find(Record.class, consultation.getRecord().getId());
-                consultation.setRecord(patient);
                 if (!consultation.getActesTechniques().isEmpty()) {
                     List<ActesTechniques> listActes = new ArrayList<>();
                     for (ActesTechniques act : consultation.getActesTechniques()) {
@@ -34,6 +28,7 @@ public class ConsultationRepositoryImpl implements ConsultationRepository {
                     }
                     consultation.setActesTechniques(listActes);
                 }
+                em.merge(consultation.getRecord());
                 em.persist(consultation);
                 tx.commit();
                 return consultation;

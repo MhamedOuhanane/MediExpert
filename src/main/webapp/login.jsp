@@ -98,7 +98,7 @@
             <div class="text-center z-10 py-8">
                 <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-3 shadow-xl">
                     <div class="w-full flex items-center justify-center">
-                        <img src="${pageContext.request.contextPath}/images/loginLogo.png"
+                        <img src="${pageContext.request.contextPath}/images/loginLogo.svg"
                              alt="Logo Connection"
                              class="w-[60%] object-cover" />
                     </div>

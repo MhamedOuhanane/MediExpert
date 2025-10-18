@@ -60,7 +60,7 @@ public class Record {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "record", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "record", cascade = CascadeType.MERGE)
     private List<Consultation> consultations = new ArrayList<>();
 
     public Record() {}

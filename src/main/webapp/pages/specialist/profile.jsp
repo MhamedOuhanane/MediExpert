@@ -32,7 +32,7 @@
                                     </div>
                                 </div>
                                 <div class="ml-6">
-                                    <h3 class="text-2xl font-bold text-gray-800">M. ${specialist.nom} ${specialist.prenom}</h3>
+                                    <h3 class="text-2xl font-bold text-gray-800">D. ${specialist.nom} ${specialist.prenom}</h3>
                                     <p class="text-gray-500">N° Carte: <span class="text-gray-800"> ${ specialist.carte } </span> </p>
                                 </div>
                             </div>

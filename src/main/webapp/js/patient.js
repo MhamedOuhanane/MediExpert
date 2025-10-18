@@ -28,14 +28,6 @@ function showCancelModal(id, name) {
 function closeCancelModal() {
     document.getElementById('cancelModal').classList.add('hidden');
 }
-function showDeleteModal(id, name) {
-    document.getElementById('deletePatientId').value = id;
-    document.getElementById('deletePatientName').textContent = name;
-    document.getElementById('deleteModal').classList.remove('hidden');
-}
-function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.add('hidden');
-}
 function showConsultationModal(recordId, patientName) {
     document.getElementById('consultationRecordId').value = recordId;
     document.getElementById('consultationPatientName').textContent = patientName;

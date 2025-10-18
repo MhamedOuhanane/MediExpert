@@ -28,12 +28,10 @@ public class ConsultationServiceImpl implements ConsultationService {
         try {
             Record patient = recordService.findRecordById(consultation.getRecord().getId());
             if (patient == null || !patient.getStatus().equals(StatusPatient.EN_ATTENTE)) throw new IllegalArgumentException("Une consultation ne peut être effectuée pour un patient qui n'est pas sur la liste d'attente.");
-            Consultation consultation1 = consultationRepository.insertConsultation(consultation);
-            if (consultation1 != null) {
-                StatusPatient status = consultation1.getStatut().equals(ConsultationStatut.TERMINEE) ? StatusPatient.TERMINEE : StatusPatient.EN_COURS;
-                patient = recordService.updateStatus(consultation.getRecord().getId(), status);
-            }
-            return consultation1;
+            StatusPatient status = consultation.getStatut().equals(ConsultationStatut.TERMINEE) ? StatusPatient.TERMINEE : StatusPatient.EN_COURS;
+            patient.setStatus(status);
+            consultation.setRecord(patient);
+            return consultationRepository.insertConsultation(consultation);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -69,11 +67,10 @@ public class ConsultationServiceImpl implements ConsultationService {
     public Consultation termineConsultation(Consultation consultation) {
         if (consultation == null) throw new IllegalArgumentException("Le demande ne peut pas être null.");
         try {
-            Consultation consultation1 = this.consultationRepository.updateConsultation(consultation);
-            if (consultation1 != null && consultation.getStatut().equals(ConsultationStatut.TERMINEE)) {
-                Record record = this.recordService.updateStatus(consultation1.getRecord().getId(), StatusPatient.TERMINEE);
-            }
-            return consultation1;
+            Record record = this.recordService.findRecordById(consultation.getRecord().getId());
+            if (consultation.getStatut().equals(ConsultationStatut.TERMINEE)) record.setStatus(StatusPatient.TERMINEE);
+            consultation.setRecord(record);
+            return this.consultationRepository.updateConsultation(consultation);
         } catch (RuntimeException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

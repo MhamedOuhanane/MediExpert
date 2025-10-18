@@ -36,7 +36,7 @@ public class Consultation {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "record_id")
     private Record record;
 

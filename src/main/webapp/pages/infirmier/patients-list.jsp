@@ -151,15 +151,6 @@
                                                 </svg>
                                             </button>
                                             <% } %>
-
-                                            <!-- Supprimer -->
-                                            <button onclick="showDeleteModal('<%= patient.getId() %>', '<%= patient.getPrenom() %> <%= patient.getNom() %>')"
-                                                    class="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition"
-                                                    title="Supprimer">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -342,38 +333,6 @@
                         <button type="submit"
                                 class="flex-1 px-4 py-2 bg-orange-600 text-white font-semibold rounded-lg shadow-md hover:bg-orange-700 transition">
                             Oui, annuler
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Confirmation Suppression -->
-    <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all animate-scale-in">
-            <div class="p-6">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
-                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 text-center mb-2">Supprimer le Patient</h3>
-                <p class="text-sm text-gray-600 text-center mb-6">
-                    Êtes-vous sûr de vouloir supprimer définitivement le patient <span id="deletePatientName" class="font-bold"></span> ? Cette action est irréversible.
-                </p>
-                <form id="deleteForm" action="${pageContext.request.contextPath}/patients/delete" method="POST">
-                    <input type="hidden" name="id" id="deletePatientId">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <input type="hidden" name="csrfToken" value="${csrfToken}">
-                    <div class="flex space-x-3">
-                        <button type="button" onclick="closeDeleteModal()"
-                                class="flex-1 px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition">
-                            Annuler
-                        </button>
-                        <button type="submit"
-                                class="flex-1 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition">
-                            Supprimer
                         </button>
                     </div>
                 </form>

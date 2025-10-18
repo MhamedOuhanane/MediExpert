@@ -1,22 +1,24 @@
 function showConsultationDetails(consultation) {
-    var initials = consultation.initials;
-    var patientName = consultation.patientPrenom + ' ' + consultation.patientNom;
+    console.log('Consultation data:', consultation); // Debug
+
+    var initials = consultation.initials || '';
+    var patientName = (consultation.patientPrenom || '') + ' ' + (consultation.patientNom || '');
 
     document.getElementById('modalAvatar').textContent = initials;
     document.getElementById('modalPatientName').textContent = patientName;
-    document.getElementById('modalPatientCarte').textContent = 'N° Carte: ' + consultation.patientCarte;
-    document.getElementById('modalRaison').textContent = consultation.raison;
-    document.getElementById('modalObservations').textContent = consultation.observations;
-    document.getElementById('modalActesTechniques').textContent = consultation.actesTechniques;
-    document.getElementById('modalPrix').textContent = consultation.prix;
-    document.getElementById('modalTotalActes').textContent = consultation.totalActes;
-    document.getElementById('modalPrixTotal').textContent = consultation.prixTotal;
-    document.getElementById('modalCreatedAt').textContent = consultation.createdAt;
-    document.getElementById('modalUpdatedAt').textContent = consultation.updatedAt;
+    document.getElementById('modalPatientCarte').textContent = 'N° Carte: ' + (consultation.patientCarte || '');
+    document.getElementById('modalRaison').textContent = consultation.raison || '';
+    document.getElementById('modalObservations').textContent = consultation.observations || '';
+    document.getElementById('modalActesTechniques').textContent = consultation.actesTechniques || 'Aucun acte';
+    document.getElementById('modalPrix').textContent = consultation.prix || '0.00';
+    document.getElementById('modalTotalActes').textContent = consultation.totalActes || '0.00';
+    document.getElementById('modalPrixTotal').textContent = consultation.prixTotal || '0.00';
+    document.getElementById('modalCreatedAt').textContent = consultation.createdAt || '';
+    document.getElementById('modalUpdatedAt').textContent = consultation.updatedAt || '';
 
     var statusElement = document.getElementById('modalStatus');
-    statusElement.textContent = consultation.status;
-    statusElement.className = 'px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ' + (consultation.statusColor || '');
+    statusElement.textContent = consultation.status || '';
+    statusElement.className = 'px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ' + (consultation.statusColor || 'bg-gray-100 text-gray-800');
 
     document.getElementById('consultationDetailsModal').classList.remove('hidden');
 }
